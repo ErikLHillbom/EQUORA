@@ -125,7 +125,7 @@ export const HERD: HerdMember[] = [
   // Konga household, south of town.
   {
     animal: animal('bari', 'Bari', 'donkey', 'female', 8, 140, 'ES-0421', 'konga', 'pack'),
-    profile: donkey({ jobs: ['water_carry'], workStart: 6, eatDay: 0.5, walkDay: 0.08, nightLieMin: [90, 150] }),
+    profile: donkey({ workStart: 6.5, harvestTrips: 1, eatDay: 0.5, walkDay: 0.08, nightLieMin: [90, 150] }),
   },
   {
     animal: animal('saba', 'Saba', 'horse', 'female', 11, 285, 'ES-0423', 'konga', 'cart'),
