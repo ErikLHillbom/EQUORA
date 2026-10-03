@@ -1,0 +1,258 @@
+/* Tag screen layout. Colours come only from tokens; the state colour lives in the Lens. */
+
+.tag-device__body {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3, 12px);
+  text-align: center;
+}
+
+.tag-device__light {
+  padding-top: 8px;
+}
+
+.tag-device__phrase {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  line-height: 1.25;
+  margin: 0;
+  max-width: 22ch;
+}
+
+.tag-device__play {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.tag-device__voice {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.tag-device__voice input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--ink);
+}
+
+.tag-reasons {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  display: grid;
+  gap: 6px;
+  width: 100%;
+}
+
+.tag-reasons li {
+  padding-left: 14px;
+  position: relative;
+}
+
+.tag-reasons li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 6px;
+  height: 1.5px;
+  background: var(--graphite);
+}
+
+.tag-note {
+  color: var(--graphite);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin: 8px 0;
+}
+
+.tag-panel {
+  padding-top: 12px;
+}
+
+.tag-scenarios {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.tag-scenarios .ui-button {
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding-block: 8px;
+}
+
+.tag-scenario__name {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.tag-scenario__meta {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: inherit;
+  opacity: 0.85;
+}
+
+.tag-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.tag-progress {
+  font-size: 0.8rem;
+  color: var(--graphite);
+  margin: 8px 0 0;
+}
+
+.tag-pipe {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+}
+
+.tag-readout {
+  width: 100%;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.tag-readout__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--rule);
+}
+
+.tag-readout__row dt {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--graphite);
+}
+
+.tag-readout__row dd {
+  margin: 0;
+  text-align: right;
+}
+
+.tag-exp {
+  display: block;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--graphite);
+}
+
+.tag-tape {
+  margin-top: 12px;
+}
+
+.tag-tape__cells {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.tag-tape__cell {
+  width: 20px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  border: 1px solid var(--ink);
+  border-radius: 2px;
+  background: var(--paper-raised);
+}
+
+/* Synthetic windows are drawn dashed, so recorded and made-up data never look the same. */
+.tag-tape__cell--synthetic {
+  border-style: dashed;
+  border-color: var(--graphite);
+  color: var(--graphite);
+}
+
+.tag-tape__key {
+  font-size: 0.75rem;
+  color: var(--graphite);
+  margin: 6px 0 0;
+}
+
+.tag-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tag-tile {
+  min-height: 88px;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 2px;
+  padding: 12px;
+  background: var(--paper-raised);
+  border: 1px solid var(--ink);
+  border-radius: 10px;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tag-tile:disabled {
+  border-color: var(--rule);
+  color: var(--graphite);
+  cursor: not-allowed;
+}
+
+.tag-tile--on {
+  background: var(--ink);
+  color: var(--paper-raised);
+}
+
+.tag-tile:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.tag-tile__mark {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.tag-tile__label {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+}
+
+.tag-tile__state {
+  font-size: 0.8rem;
+}
