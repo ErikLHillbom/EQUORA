@@ -82,7 +82,7 @@ What the data does not cover (scored, say it in the app and the video):
 The AI:
 - A small activity classifier (stand, walk, trot, eat, roll) on 2 s windows of motion data, orientation-independent features, a random forest of about 30 trees. Trained on Horsing Around, evaluated leave-one-horse-out. Exported as a small JSON file for the app and a C header for a microcontroller.
 - A per-animal baseline: median and spread of activity, lying and eating for each hour of the day, over the last 14 days.
-- Change detection on that baseline (robust z-score and CUSUM) combined across signals.
+- Change detection on that baseline (median-based z-score and CUSUM) combined across signals.
 - A short forecast: expected behaviour for the next hours, and a water-debt projection from workload and weather.
 
 Why not something simpler: an SMS service or a spreadsheet cannot watch an animal all day. The signal is a change in one animal's own pattern, which only a model running on the animal can learn.
