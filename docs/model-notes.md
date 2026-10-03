@@ -76,7 +76,7 @@ Mule: we found no study. ASSUMPTION: horse rules for rolling and up-downs (they 
 ### 4. WATER
 
 - Water debt of 3% of body weight or more.
-- Or 4 hours of work or more since the last water stop. Source: EU guidance on working equids as given in our research notes (rest at least every 4 hours, 30 minutes, with water); the exact document still needs to be cited.
+- Or 4 hours of work or more since the last water stop. Source: EURCAW Ruminants and Equines, guidance on the welfare of working equids in tourism (rest at least every 4 hours, for at least 30 minutes, with water), https://www.eurcaw-ruminants-equines.eu/guidance-on-the-welfare-of-working-equids-in-tourism/.
 - Or, in heat past the "reduce work" comfort index, 3 hours of work without water while working now.
 
 Bands: under 3% fine, 3 to 5% offer water, 5 to 8% concern, over 8% the sentence says the deficit is high. URGENT stays reserved for behaviour signs.
@@ -103,15 +103,15 @@ Everything else.
 `src/forecast/water.ts`. The deficit is the water lost since the last full drink, in litres, shown as % of body weight (1 L of water is about 1 kg).
 
 - Maintenance water, horses: 5 L per 100 kg per day at 20 deg C, rising linearly to 12 L at 35 deg C, flat outside that range (NRC 2007, Nutrient Requirements of Horses).
-- Maintenance, donkeys: 8 to 10 L per 100 kg per day over the same range; about 20 L a day for a working donkey in heat. Source: our research notes; the primary source still needs to be cited.
+- Maintenance, donkeys: 8 to 10 L per 100 kg per day over the same range; about 20 L a day for a working donkey in heat. Sources: Aganga et al. 2000, Livestock Research for Rural Development 12(2), https://www.lrrd.org/lrrd12/2/agan122.htm; Veterinary Care of Donkeys, nutrition chapter, IVIS, https://www.ivis.org/library/veterinary-care-of-donkeys/nutrition-and-feeding-of-donkeys-0.
 - Mules: halfway between. ASSUMPTION.
 - Forage water: 30% of the maintenance need comes from forage and does not build up as debt. ASSUMPTION. Without it every donkey would pass 3% each night between the last and first drink, which owners do not see.
-- Sweat while working: horses 0.5 to 1 L per 100 kg per hour at slow draught work, set by the climb rate (0.5 on the flat, 1 at 200 m climbed per hour of work). Source: our research notes. Only walking and trotting work minutes count.
+- Sweat while working: horses 0.5 to 1 L per 100 kg per hour at slow draught work, set by the climb rate (0.5 on the flat, 1 at 200 m climbed per hour of work). Scaled down from sport-horse figures of 10 to 15 L per hour in hot conditions (The Horse, Fluids and electrolytes, https://thehorse.com/14113/fluids-and-electrolytes/), because working pace is slow. The scaling is an ASSUMPTION. Only walking and trotting work minutes count.
 - Heat: plus 10% sweat per deg C above 25. ASSUMPTION. Times 1.25 past comfort index 150 and 1.5 past 180.
 - Donkeys sweat half as much as horses for the same work. ASSUMPTION: we found no measured figure. Donkeys keep water better than horses, so half is a placeholder to replace with data. Mules 0.75, also an ASSUMPTION.
 - Drinking: at a known water point the animal drinks back its deficit at up to 1.5 L per minute. ASSUMPTION. Home troughs count as known water points.
 - Start: the model runs over the last 36 hours from zero debt. Any water stop resets most of it.
-- Comfort index for horses: deg F plus relative humidity %. Under 130 normal, 150 reduce work, 180 stop work. Source: equine extension guidance in our research notes; the primary source still needs to be cited. For donkeys the index is likely conservative, and the sentence says so.
+- Comfort index for horses: deg F plus relative humidity %. Under 130 normal, 150 reduce work, 180 stop work. Sources: US Polo Association, equine heat index warning, https://www.uspolo.org/news-social/news/equine-heat-index-warning; US Equestrian heat alert recommendations, https://www.usef.org/media/press-releases/heat-alert-clarification-recommendations-for. For donkeys the index is likely conservative, and the sentence says so.
 - The comfort index only counts from 25 deg C. ASSUMPTION. On cool, humid highland mornings (20 deg C, 85% humidity) the sum passes 150 while no animal is heat stressed.
 
 What-if plans (`whatIf`): continue work (until 18:00, with the recent share and intensity of work), rest now (no work, no water), rest at water (walk to the nearest water point at 4 km/h, drink, rest). The forecast band for water debt is plus or minus 15% at 6 hours, growing with the square root of time. ASSUMPTION: the water model has no measured error.
