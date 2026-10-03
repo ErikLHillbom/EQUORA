@@ -1,0 +1,102 @@
+/* Why it matters: a field report. Ink on paper, no state colour, one drawing. */
+
+:where(.why) p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.why-intro {
+  margin-top: var(--space-3);
+  font-size: var(--size-lead);
+  line-height: 1.45 !important;
+}
+
+.why section > .ui-numhead + * {
+  margin-top: var(--space-3);
+}
+
+.why-sheet > * + * {
+  margin-top: var(--space-3);
+}
+
+.why-figure {
+  margin: 0;
+  padding-top: var(--space-3);
+}
+
+.why-figure__slip {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  max-width: 300px;
+  margin: 0 auto;
+  padding-top: 24px !important;
+  transform: rotate(0.8deg);
+}
+
+.why-figure__slip .ui-posture {
+  max-width: 100%;
+  height: auto;
+}
+
+.why-figure__caption {
+  font-family: var(--font-mono);
+  font-size: var(--size-label);
+  color: var(--graphite);
+  text-align: center;
+}
+
+.why .cite {
+  font-size: var(--size-small);
+  color: var(--graphite);
+  white-space: normal;
+}
+
+.why .cite a {
+  color: var(--graphite);
+  text-underline-offset: 3px;
+}
+
+.why .cite a:focus-visible {
+  outline: var(--focus);
+  outline-offset: var(--focus-offset);
+}
+
+.why-list {
+  margin: 0;
+  padding-left: 1.1em;
+}
+
+.why-list li {
+  line-height: 1.5;
+}
+
+.why-list li + li {
+  margin-top: var(--space-2);
+}
+
+.why .ui-ledger tbody th {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+
+.why .ui-ledger td {
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.why-math__share {
+  font-weight: 600;
+}
+
+.why-note {
+  font-size: var(--size-small);
+  color: var(--graphite);
+}
+
+.why-cta {
+  display: grid;
+  gap: var(--space-2);
+}
