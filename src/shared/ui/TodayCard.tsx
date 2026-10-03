@@ -120,7 +120,7 @@ export function TodayCard({
     shown == null ? (
       <span className="ui-today-nodata">{t('shared.today.noData')}</span>
     ) : dotMatrix ? (
-      <DotNumber value={shown} height={44} label={unit ? `${shown} ${unit}` : shown} />
+      <DotNumber value={shown} height={48} label={unit ? `${shown} ${unit}` : shown} />
     ) : (
       <span className="ui-today-number mono">{shown}</span>
     )

@@ -37,12 +37,35 @@ test.describe('specimen sheet', () => {
     await page.addStyleTag({ content: 'html { filter: grayscale(1); }' })
     await page.screenshot({ path: 'e2e/screenshots/specimen-360-grey.png', fullPage: true })
   })
+
+  test('screenshot each section, for close review', async ({ page }) => {
+    await page.locator('.ui-header').screenshot({ path: 'e2e/screenshots/specimen-00-header.png' })
+    const sections = page.locator('.spec-section')
+    const count = await sections.count()
+    for (let i = 0; i < count; i++) {
+      await sections.nth(i).screenshot({ path: `e2e/screenshots/specimen-${String(i + 1).padStart(2, '0')}.png` })
+    }
+    await page.addStyleTag({ content: 'html { filter: grayscale(1); }' })
+    for (let i = 0; i < count; i++) {
+      await sections.nth(i).screenshot({ path: `e2e/screenshots/specimen-${String(i + 1).padStart(2, '0')}-grey.png` })
+    }
+  })
 })
 
 test('the home placeholder shows the bottom nav with five items', async ({ page }) => {
   await page.goto('/')
+  await expect(page.getByRole('heading', { name: 'Animals' })).toBeVisible()
   const nav = page.getByRole('navigation')
   await expect(nav.getByRole('link')).toHaveCount(5)
   await expect(nav.getByRole('link', { name: 'Herd' })).toHaveAttribute('aria-current', 'page')
   await page.screenshot({ path: 'e2e/screenshots/home-360.png', fullPage: true })
+})
+
+test('the language switch changes the labels and flags the machine translation', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Amharic' }).click()
+  await expect(page.getByRole('heading', { name: 'እንስሳት' })).toBeVisible()
+  await expect(page.locator('html')).toHaveAttribute('lang', 'am')
+  await expect(page.locator('.app-machine-note')).toBeVisible()
+  await page.screenshot({ path: 'e2e/screenshots/home-360-am.png', fullPage: true })
 })

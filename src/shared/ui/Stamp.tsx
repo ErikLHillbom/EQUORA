@@ -104,7 +104,7 @@ export function Stamp({ shape, size, ink, seed, rotate, label, rim, className }:
       focusable="false"
       {...a11y}
     >
-      <WearDefs uid={uid} seed={seed} voidFrequency={small ? 0.13 : 0.085} roughScale={small ? 3 : 2} />
+      <WearDefs uid={uid} seed={seed} voidFrequency={small ? 0.16 : 0.085} voids={small ? 3.9 : 4.35} roughScale={small ? 2.5 : 2} />
       <g transform={`rotate(${angle.toFixed(2)} 50 50)`}>
         <g {...wearProps(uid)}>
           <ShapeGeometry shape={shape} ink={ink} small={small} rim={showRim && shape === 'circle'} />

@@ -3,9 +3,9 @@
 // Under prefers-contrast: more, CSS removes the filter and mask (.ui-wear).
 import { noiseSeed } from './geometry'
 
-/** Threshold for the void mask. alpha = K * noise - B, so voids appear where noise < B / K. */
+/** Void mask: alpha = K * noise - B. Measured in Chromium: B 4.35 leaves about 10% voids, B 3.9 about 6%. */
 const VOID_K = 14
-const VOID_B = 5.2
+const VOID_B = 4.35
 
 export interface WearDefsProps {
   /** Unique, url-safe id prefix for this SVG. */
@@ -18,6 +18,8 @@ export interface WearDefsProps {
   roughFrequency?: number
   /** Displacement of the rough edge in user units. */
   roughScale?: number
+  /** Void threshold (see VOID_B). Lower means fewer voids. */
+  voids?: number
   /** Mask and filter region, in user units. */
   region?: { x: number | string; y: number | string; width: number | string; height: number | string }
 }
@@ -28,6 +30,7 @@ export function WearDefs({
   voidFrequency = 0.09,
   roughFrequency = 0.55,
   roughScale = 2,
+  voids = VOID_B,
   region = { x: -10, y: -10, width: 120, height: 120 },
 }: WearDefsProps) {
   const s = noiseSeed(seed)
@@ -46,7 +49,7 @@ export function WearDefs({
         height={region.height}
       >
         <feTurbulence type="fractalNoise" baseFrequency={voidFrequency} numOctaves={3} seed={s + 11} />
-        <feColorMatrix type="matrix" values={`0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  ${VOID_K} 0 0 0 -${VOID_B}`} />
+        <feColorMatrix type="matrix" values={`0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  ${VOID_K} 0 0 0 -${voids}`} />
       </filter>
       <mask
         id={`${uid}-wear`}

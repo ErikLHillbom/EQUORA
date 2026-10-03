@@ -66,9 +66,14 @@ export function pencilLoop(seed: string, w = 100, h = 100, points = 26, sweepDeg
     const f = i / (points - 1)
     const a = start + f * sweep
     // The second lap drifts outward a little so the overshoot reads as a second pass.
-    const drift = 1 + f * 0.035
-    const jr = 1 + (rng() - 0.5) * 0.045
-    pts.push([cx + Math.cos(a) * (w / 2) * jr * drift, cy + Math.sin(a) * (h / 2) * jr * drift])
+    const drift = 1 + f * 0.018
+    const jr = 1 + (rng() - 0.5) * 0.04
+    // A squarish superellipse (exponent 6) so the loop clears the corners of a wide card.
+    const c = Math.cos(a)
+    const s = Math.sin(a)
+    const sx = Math.sign(c) * Math.abs(c) ** (1 / 3)
+    const sy = Math.sign(s) * Math.abs(s) ** (1 / 3)
+    pts.push([cx + sx * (w / 2) * jr * drift, cy + sy * (h / 2) * jr * drift])
   }
   return catmullRom(pts, false)
 }

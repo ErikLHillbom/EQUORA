@@ -33,7 +33,7 @@ export function DotNumber({ value, height = 48, label, className }: DotNumberPro
   const text = String(value)
   const h = Math.max(40, height)
   const pitch = h / 7
-  const r = pitch * 0.4
+  const r = pitch * 0.43
   const lit: [number, number][] = []
   const ghost: [number, number][] = []
   let col = 0
@@ -57,7 +57,7 @@ export function DotNumber({ value, height = 48, label, className }: DotNumberPro
       <svg width={width} height={h} viewBox={`0 0 ${width.toFixed(1)} ${h.toFixed(1)}`} aria-hidden="true" focusable="false">
         <g fill="currentColor" opacity={0.1}>
           {ghost.map(([x, y]) => (
-            <circle key={`g${x}-${y}`} cx={at(x)} cy={at(y)} r={r.toFixed(2)} />
+            <circle key={`g${x}-${y}`} cx={at(x)} cy={at(y)} r={(pitch * 0.3).toFixed(2)} />
           ))}
         </g>
         <g fill="currentColor">

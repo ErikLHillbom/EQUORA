@@ -158,7 +158,7 @@ function lying(f: Figure, drop: number): Figure {
     head: up.head,
     ears: up.ears,
     mane: up.mane,
-    tail: [L([[29, 32 + drop], [22, 42 + drop], [16, 52 + drop], [11, 70]], [4, 4, 3.5, 2.5])],
+    tail: [L([[28, 32 + drop], [24, 42 + drop], [21, 49 + drop], [15, 69.5]], [4, 4, 3, 2.4])],
     farLegs: [],
     nearLegs: [
       L([[79, 46 + drop], [90, 50 + drop], [84, 54 + drop]], [7, 4.5, 4.5]),

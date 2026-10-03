@@ -96,6 +96,7 @@
 }
 
 .spec-animal .ui-label {
+  display: block;
   margin-bottom: var(--space-2);
 }
 

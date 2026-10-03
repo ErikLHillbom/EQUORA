@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test'
 
-const PORT = 5173
+// A fixed, unusual port so parallel worktrees never share a dev server. Override with E2E_PORT.
+const PORT = Number(process.env.E2E_PORT ?? 5417)
 
 export default defineConfig({
   testDir: './e2e',
@@ -24,7 +25,7 @@ export default defineConfig({
   webServer: {
     command: `npm run dev -- --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}`,
-    reuseExistingServer: true,
+    reuseExistingServer: false,
     timeout: 120_000,
   },
 })

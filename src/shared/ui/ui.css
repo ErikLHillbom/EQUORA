@@ -174,9 +174,9 @@
 
 .ui-pencilcircle-mark {
   position: absolute;
-  inset: -9px -7px -10px -8px;
-  width: calc(100% + 15px);
-  height: calc(100% + 19px);
+  inset: -14px -10px;
+  width: calc(100% + 20px);
+  height: calc(100% + 28px);
   overflow: visible;
   pointer-events: none;
   z-index: 1;
@@ -415,21 +415,23 @@
 }
 
 .ui-tab {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
   min-height: var(--touch);
   min-width: var(--touch);
-  padding: 0 10px;
+  padding: 0 6px;
   border: 0;
   border-radius: 5px;
   background: transparent;
   font-family: var(--font-mono);
   font-size: var(--size-label);
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
+  line-height: 1.15;
+  text-align: center;
   text-transform: uppercase;
   color: var(--graphite);
   cursor: pointer;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .ui-tab[aria-selected='true'] {
@@ -949,4 +951,15 @@
   stroke-width: 0.8;
   stroke-linecap: round;
   stroke-dasharray: 5 3;
+}
+
+/* Inside flat sheets there is no grain, so no knockout. */
+.ui-slip .ui-numhead,
+.ui-folder-sheet .ui-numhead {
+  background: transparent;
+  padding: 0;
+}
+
+.ui-rectstamp--sentence .ui-rectstamp-text {
+  text-wrap: balance;
 }

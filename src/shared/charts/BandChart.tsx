@@ -46,7 +46,7 @@ export interface BandChartProps {
   className?: string
 }
 
-const M = { top: 12, right: 10, bottom: 26, left: 36 }
+const M = { top: 24, right: 10, bottom: 26, left: 36 }
 const pad2 = (n: number) => String(n).padStart(2, '0')
 
 function defaultFormatX(span: number) {
@@ -160,7 +160,7 @@ export function BandChart({
             <line x1="0" y1="0" x2="0" y2="5" stroke="var(--hatch)" strokeWidth="1.1" />
           </pattern>
           <pattern id={`${uid}-fhatch`} width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)">
-            <line x1="0" y1="0" x2="0" y2="4" stroke="var(--hatch)" strokeWidth="0.7" opacity="0.6" />
+            <line x1="0" y1="0" x2="0" y2="4" stroke="var(--hatch)" strokeWidth="0.8" opacity="0.8" />
           </pattern>
           <clipPath id={`${uid}-plot`}>
             <rect width={innerW} height={innerH} />
@@ -220,7 +220,7 @@ export function BandChart({
             </text>
           ))}
           {unit && (
-            <text x={-6} y={-3} textAnchor="end" className="ui-chart-label">
+            <text x={-M.left} y={-12} textAnchor="start" className="ui-chart-label">
               {unit}
             </text>
           )}
