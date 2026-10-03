@@ -12,11 +12,11 @@ export interface AppRoute {
 }
 
 export const ROUTES: readonly AppRoute[] = [
-  { path: '/', Component: fromPlaceholders('HerdPlaceholder') },
+  { path: '/', Component: lazy(() => import('../herd/HerdScreen')) },
   { path: '/map', Component: fromPlaceholders('MapPlaceholder') },
   { path: '/animal/:id', Component: fromPlaceholders('AnimalPlaceholder') },
   { path: '/tag', Component: lazy(() => import('../tag/TagScreen')) },
-  { path: '/stats', Component: fromPlaceholders('StatsPlaceholder') },
+  { path: '/stats', Component: lazy(() => import('../herd/StatsScreen')) },
   { path: '/data', Component: fromPlaceholders('DataPlaceholder') },
   { path: '/why', Component: fromPlaceholders('WhyPlaceholder') },
   // Hidden component sheet. Not in the nav.
