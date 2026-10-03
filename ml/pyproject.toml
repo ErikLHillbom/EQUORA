@@ -8,6 +8,8 @@ dependencies = [
     "numpy>=2.0",
     "pandas>=2.2",
     "emlearn>=0.21",
+    # emlearn imports distutils, which Python 3.12 removed; setuptools provides it.
+    "setuptools>=70",
     "remotezip>=0.12",
     "pytest>=8.0",
 ]
