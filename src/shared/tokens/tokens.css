@@ -1,0 +1,85 @@
+/*
+ * Design tokens (DESIGN 4, 5, 6). Light theme only.
+ * The page is ink on paper. Colour appears only for the five states.
+ * tokens.test.ts parses this file and checks WCAG contrast for every text token.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Paper and ink */
+  --paper: #f5f0e6;
+  --paper-raised: #fbf8f2;
+  --kraft: #c9b08a;
+  --kraft-deep: #b39a73;
+  --rule: #d9d1c2;
+  --ink: #1f1c17;
+  --graphite: #57524a;
+
+  /* Text tokens. Every --*-text and --ink, --graphite must reach 4.5:1 on paper and paper-raised. */
+  --text-ink: var(--ink);
+  --text-graphite: var(--graphite);
+
+  /* State inks. Stamp value (fills, lines) and text value. */
+  --state-normal: #2e6a3a;
+  --state-normal-text: #2e6a3a;
+  --state-water: #1f4e9a;
+  --state-water-text: #1f4e9a;
+  --state-check: #b67b12; /* darkened from #c98a1b to reach 3:1 as a graphic */
+  --state-check-text: #8a5a10;
+  --state-urgent: #a8261e;
+  --state-urgent-text: #a8261e;
+  --state-not_sure: #5f5f5f;
+  --state-not_sure-text: #5f5f5f;
+
+  /* Pencil and grid washes (graphite with alpha, never blue) */
+  --grid-minor: rgba(87, 82, 74, 0.07);
+  --grid-major: rgba(87, 82, 74, 0.14);
+  --hatch: rgba(87, 82, 74, 0.38);
+  --hairline: rgba(31, 28, 23, 0.14);
+
+  /* Type */
+  --font-serif: 'Source Serif 4', 'Noto Serif', Georgia, 'Noto Sans Ethiopic', serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Noto Sans Ethiopic', monospace;
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Helvetica Neue', Arial,
+    'Noto Sans Ethiopic', 'Nyala', 'Abyssinica SIL', sans-serif;
+
+  --size-label: 0.75rem; /* 12 px mono caps */
+  --size-small: 0.875rem; /* 14 px */
+  --size-body: 1rem; /* 16 px */
+  --size-lead: 1.125rem; /* 18 px */
+  --size-name: 1.375rem; /* 22 px serif animal names */
+  --size-title: 1.75rem; /* 28 px serif screen titles */
+  --size-number: 2.5rem; /* 40 px, the one main number per card */
+  --tracking-label: 0.12em;
+
+  /* Space (4 px steps) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --gutter: 16px;
+
+  /* Shape */
+  --radius-card: 6px;
+  --radius-button: 4px;
+  --radius-pill: 28px;
+  --touch: 48px;
+
+  /* A sheet resting on a desk */
+  --shadow-card: 0 1px 0 rgba(31, 28, 23, 0.05), 0 1px 2px rgba(31, 28, 23, 0.08),
+    0 8px 16px -10px rgba(31, 28, 23, 0.22);
+  --shadow-nav: 0 6px 16px -6px rgba(31, 28, 23, 0.25);
+  --border-card: 1px solid rgba(31, 28, 23, 0.14);
+
+  /* Focus ring: always visible */
+  --focus: 2px solid var(--ink);
+  --focus-offset: 2px;
+
+  /* Paper grain: 256 px tile, fractal noise, desaturated. Used on body::before only. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)'/%3E%3C/svg%3E");
+  --grain-opacity: 0.07;
+}

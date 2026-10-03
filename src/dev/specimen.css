@@ -1,0 +1,161 @@
+/* Layout for the specimen sheet only. */
+
+.spec-section > * + * {
+  margin-top: var(--space-4);
+}
+
+.spec-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.spec-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.spec-center {
+  justify-content: center;
+}
+
+.spec-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.spec-stack > .ui-button--block,
+.spec-stack > .ui-tabs,
+.spec-stack > .ui-chart,
+.spec-stack > .ui-dotbar {
+  align-self: stretch;
+}
+
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4) var(--space-2);
+  justify-items: center;
+  margin-top: var(--space-3);
+}
+
+.spec-list.spec-row {
+  margin-top: var(--space-3);
+}
+
+.spec-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin-top: var(--space-3);
+}
+
+.spec-counts li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.spec-count {
+  font-weight: 600;
+  font-size: var(--size-lead);
+}
+
+.spec-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.spec-focus {
+  outline: var(--focus);
+  outline-offset: var(--focus-offset);
+}
+
+.spec-note {
+  font-size: var(--size-small);
+  color: var(--graphite);
+}
+
+.spec-animal {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+}
+
+.spec-name {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: var(--size-name);
+  line-height: 1.2;
+}
+
+.spec-animal .ui-label {
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+.spec-inline-num {
+  width: fit-content;
+  padding: 4px 8px;
+  background: var(--paper);
+}
+
+.spec-big {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.spec-taped {
+  display: grid;
+  place-items: center;
+  padding: var(--space-5) var(--space-4) var(--space-4);
+}
+
+.spec-postures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4) var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.spec-postures li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.spec-postures svg {
+  width: 100%;
+  height: auto;
+}
+
+.spec-lenses {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-5) var(--space-2);
+  justify-items: center;
+  padding: var(--space-5) var(--space-3);
+}
+
+.spec-lenses .ui-lens-word {
+  font-size: 0.8125rem;
+  text-align: center;
+}
+
+.spec-kraft {
+  padding-top: var(--space-5);
+}
+
+.spec-kraft-title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: var(--size-lead);
+  margin-bottom: var(--space-2);
+}

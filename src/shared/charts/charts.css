@@ -1,0 +1,50 @@
+.ui-chart {
+  margin: 0;
+  width: 100%;
+  min-width: 0;
+}
+
+.ui-chart svg {
+  display: block;
+  overflow: visible;
+}
+
+.ui-chart-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  fill: var(--graphite);
+}
+
+.ui-chart-label--ink {
+  fill: var(--ink);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.ui-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--graphite);
+}
+
+.ui-chart-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ui-chart-key svg {
+  flex: none;
+}
+
+.ui-sparkline {
+  display: inline-block;
+  vertical-align: middle;
+  overflow: visible;
+}
