@@ -49,3 +49,22 @@ DESIGN 4 suggested #C98A1B for the CHECK stamp. As a graphic on paper it reached
 ## Posture drawings are placeholders
 
 The ten posture drawings (horse and donkey, five poses each) are simple silhouettes made in code, about 1.5 KB each, marked `data-placeholder`. The mule uses the donkey set. They will be replaced by our own drawings or by drawings based on Muybridge's "The Horse in Motion" (1878, public domain).
+
+## Posture drawing sources
+
+The ten posture drawings are now our own line drawings. They replace the placeholder silhouettes described in the two notes above. The mule still uses the donkey set.
+
+How they are made: each animal is 10 to 14 pen strokes, written as points in `src/shared/ui/postures.ts` and drawn in code as filled ink ribbons that swell in the middle and taper to round ends. The hand-made wobble comes from seeded jitter on the points, so a drawing is the same on every render. Dark ink sits only on the mane, the tail tip and the hooves. Light hatching sits on the far legs and under the belly. No file in `public/art/` is used.
+
+Sources for each drawing. No image was traced. Muybridge's plates are public domain.
+
+- Horse, walking: leg positions from Eadweard Muybridge, "Animal Locomotion" (1887), the horse walk plates. Near fore in the air with the knee bent about 35 degrees, far hind pushing off behind, three hooves down.
+- Horse, trotting: leg positions from Muybridge, "The Horse in Motion" (1878), the trotting series (Abe Edgington). Diagonal pair lifted, the other diagonal under the body. No gallop.
+- Horse, standing, grazing and lying: no Muybridge plate. Our own drawing with the same body and leg lengths as the walk and trot.
+- Donkey, all five poses: our own drawing. The leg angles for walking and trotting are the horse angles above. The donkey proportions follow our review notes: ears about 1.6 times the head width with rounded tips, a short upright mane, a straight back, a deeper body, a larger head, a cord tail with an end tuft, thinner legs with small upright hooves, a dorsal stripe and a shoulder cross.
+
+The horse is drawn as a small, lean working horse, as kept around Yirgacheffe, and not as a sport horse.
+
+Stale data: the drawing turns into thin broken graphite lines (1.1 units, dashed), with no ink, no hatching and no dark masses. The state colour is never applied to a drawing.
+
+Size, measured as SVG path text: 4.1 to 7.1 KB per drawing, about 61 KB for all ten. The stale outline is 1.3 to 2.3 KB per drawing. A unit test fails if one drawing reaches 8 KB or the set reaches 80 KB.
