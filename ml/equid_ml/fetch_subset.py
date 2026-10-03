@@ -134,23 +134,46 @@ def fetch_subject(name: str, parts: list[tuple[int, str]]) -> dict:
     return summary
 
 
+def fetch_subject_with_retry(name: str, parts: list[tuple[int, str]], attempts: int = 6) -> dict:
+    """The server answers 503 when busy. Restart the subject from scratch after a pause."""
+    for attempt in range(1, attempts + 1):
+        try:
+            return fetch_subject(name, parts)
+        except Exception as e:  # noqa: BLE001, any network error is worth a retry
+            if attempt == attempts:
+                raise
+            wait = 10 * attempt
+            print(f"  {name}: attempt {attempt} failed ({e.__class__.__name__}: {e}), retry in {wait} s", flush=True)
+            time.sleep(wait)
+    raise AssertionError("unreachable")
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--workers", type=int, default=4)
+    ap.add_argument("--workers", type=int, default=3)
     ap.add_argument("--subjects", default="", help="comma separated subject names, default all labelled")
     args = ap.parse_args(argv)
 
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     LABELLED_DIR.mkdir(parents=True, exist_ok=True)
 
-    with RemoteZip(URL) as z:
-        infos = z.infolist()
-        size = z.size()
-        listing = [
-            {"name": i.filename, "bytes": i.file_size, "compressedBytes": i.compress_size} for i in infos
-        ]
-        for m in METADATA:
-            (RAW_DIR / Path(m).name).write_bytes(z.read(m))
+    for attempt in range(1, 7):
+        try:
+            with RemoteZip(URL) as z:
+                infos = z.infolist()
+                size = z.size()
+                listing = [
+                    {"name": i.filename, "bytes": i.file_size, "compressedBytes": i.compress_size}
+                    for i in infos
+                ]
+                for m in METADATA:
+                    (RAW_DIR / Path(m).name).write_bytes(z.read(m))
+            break
+        except Exception as e:  # noqa: BLE001
+            if attempt == 6:
+                raise
+            print(f"listing failed ({e}), retry in {10 * attempt} s", flush=True)
+            time.sleep(10 * attempt)
     if size != EXPECTED_ZIP_BYTES:
         print(f"warning: archive is {size} bytes, expected {EXPECTED_ZIP_BYTES}", file=sys.stderr)
     (RAW_DIR / "zip_listing.json").write_text(
@@ -168,7 +191,7 @@ def main(argv: list[str] | None = None) -> int:
 
     summaries = []
     with ThreadPoolExecutor(max_workers=args.workers) as ex:
-        futs = {ex.submit(fetch_subject, s, parts[s]): s for s in wanted}
+        futs = {ex.submit(fetch_subject_with_retry, s, parts[s]): s for s in wanted}
         for fut in as_completed(futs):
             s = fut.result()
             s["compressedBytesStreamed"] = sum(compressed[m] for m in s["parts"])
