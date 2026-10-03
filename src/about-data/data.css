@@ -1,0 +1,418 @@
+/*
+ * About the data: a datasheet. Ink on paper, hairline rules, mono tables.
+ * No state colour except the five state stamps in the rules table and the NOT SURE mark.
+ * Section 4 is the kraft honesty slip, held on with tape.
+ */
+
+:where(.ds) p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ---------- Header ---------- */
+
+.ds-intro {
+  margin-top: var(--space-3);
+  font-size: var(--size-body);
+}
+
+.ds-jump {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  font-family: var(--font-mono);
+  font-size: var(--size-label);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* ---------- Sheets ---------- */
+
+.ds section > .ui-numhead + * {
+  margin-top: var(--space-3);
+}
+
+.ds section > .ui-slip + .ui-slip {
+  margin-top: var(--space-3);
+}
+
+.ds-sheet > * + * {
+  margin-top: var(--space-3);
+}
+
+.ds-lead {
+  font-size: var(--size-body);
+}
+
+.ds-h3 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--size-lead);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.ds-h3row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.ds-rule {
+  height: 0;
+  margin: var(--space-4) 0 !important;
+  border: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.ds-note {
+  font-size: var(--size-small);
+  color: var(--graphite);
+}
+
+.ds-list {
+  margin: 0;
+  padding-left: 1.1em;
+}
+
+.ds-list li + li {
+  margin-top: var(--space-2);
+}
+
+.ds-list li {
+  line-height: 1.45;
+}
+
+/* ---------- Ledgers ---------- */
+
+.ds .ui-ledger {
+  font-size: 0.8125rem;
+}
+
+.ds .ui-ledger th,
+.ds .ui-ledger td {
+  padding: 8px 6px;
+}
+
+.ds .ui-ledger tbody th {
+  font-weight: 400;
+}
+
+/* Key and value table: keys as small mono caps. */
+.ds-spec tbody th {
+  width: 42%;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--graphite);
+  vertical-align: top;
+}
+
+.ds-spec tbody td {
+  overflow-wrap: anywhere;
+}
+
+.ds-results__shipped th {
+  font-weight: 600 !important;
+}
+
+.ds-results__shipped td {
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.ds-confusion .ds-confusion__said {
+  text-align: right;
+  border-bottom: 1px solid var(--rule);
+  font-weight: 600;
+}
+
+.ds-confusion thead tr:first-child td {
+  border-bottom: 0;
+}
+
+/* The diagonal: windows the model got right. Bold on a flat paper box, no colour. */
+.ds-confusion__hit {
+  font-weight: 700;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--hairline);
+}
+
+.ds-callout {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 600;
+}
+
+.ds-recorded {
+  display: grid;
+  gap: 2px;
+}
+
+.ds-recorded code {
+  font-family: var(--font-mono);
+  font-size: var(--size-label);
+  color: var(--graphite);
+  overflow-wrap: anywhere;
+}
+
+.ds-states tbody th {
+  width: 1%;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.ds-states tbody td {
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  vertical-align: top;
+}
+
+.ds-sublist {
+  margin: 4px 0 0;
+  padding-left: 1.1em;
+}
+
+/* ---------- Data we built with ---------- */
+
+.ds-entries {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ds-entry {
+  display: grid;
+  gap: 6px;
+  padding: var(--space-3) 0;
+}
+
+.ds-entry + .ds-entry {
+  border-top: 1px solid var(--rule);
+}
+
+.ds-entry:last-child {
+  padding-bottom: 0;
+}
+
+.ds-entry__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.ds-entry__name {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+/* Provenance tag. Shape carries the kind in greyscale: solid real, dashed simulated, dotted machine-made. */
+.ds-tag {
+  flex: none;
+  padding: 2px 7px 1px;
+  border: 1.5px solid var(--ink);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.ds-tag--simulated {
+  border-style: dashed;
+}
+
+.ds-tag--machine {
+  border-style: dotted;
+}
+
+.ds-tag--asset {
+  border-color: var(--graphite);
+  color: var(--graphite);
+}
+
+.ds-entry__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--size-label);
+  color: var(--graphite);
+}
+
+.ds-entry__meta a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch);
+  color: var(--ink);
+  overflow-wrap: anywhere;
+  text-underline-offset: 3px;
+}
+
+.ds-ref__cite {
+  display: block;
+}
+
+/* ---------- 4. The honesty slip ---------- */
+
+.ds-gaps {
+  padding-top: var(--space-3);
+}
+
+.ds-gaps__slip {
+  padding: 30px 18px 18px !important;
+  transform: rotate(-0.6deg);
+  box-shadow: 0 1px 0 rgba(31, 28, 23, 0.08), 0 2px 3px rgba(31, 28, 23, 0.12), 0 14px 22px -12px rgba(31, 28, 23, 0.4);
+}
+
+.ds-gaps__slip .ui-numhead {
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+
+.ds-gaps__sub {
+  margin-top: var(--space-2) !important;
+  font-family: var(--font-mono);
+  font-size: var(--size-small);
+  color: var(--ink);
+}
+
+.ds-gaps__list {
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ds-gap {
+  display: grid;
+  grid-template-columns: 2.1em minmax(0, 1fr);
+  gap: var(--space-2);
+  padding: var(--space-3) 0;
+  border-top: 1px dashed rgba(31, 28, 23, 0.5);
+}
+
+.ds-gap:last-child {
+  padding-bottom: 0;
+}
+
+.ds-gap__n {
+  padding-top: 2px;
+  font-family: var(--font-mono);
+  font-size: var(--size-small);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.ds-gap__what {
+  font-size: var(--size-body);
+  font-weight: 600;
+  line-height: 1.4 !important;
+  color: var(--ink);
+}
+
+.ds-gap__close {
+  margin-top: 4px !important;
+  font-size: var(--size-small);
+  line-height: 1.45 !important;
+  color: var(--ink);
+}
+
+.ds-gap__closeLabel {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ---------- 6. Sources ---------- */
+
+.ds-sources__group + .ds-sources__group {
+  margin-top: var(--space-5);
+}
+
+.ds-refs {
+  margin: var(--space-2) 0 0;
+  padding-left: 1.6em;
+  font-family: var(--font-mono);
+  font-size: var(--size-label);
+  color: var(--graphite);
+}
+
+.ds-refs li + li {
+  margin-top: var(--space-2);
+}
+
+.ds-ref {
+  display: grid;
+  gap: 2px;
+  min-height: var(--touch);
+  padding: 2px 0;
+  color: var(--ink);
+  text-decoration: none;
+  font-family: var(--font-sans);
+}
+
+.ds-ref__cite {
+  font-size: var(--size-small);
+  line-height: 1.4;
+}
+
+.ds-ref__note {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--graphite);
+}
+
+.ds-ref__link {
+  font-family: var(--font-mono);
+  font-size: var(--size-label);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+
+.ds-ref:focus-visible,
+.ds-jump:focus-visible,
+.ds-entry__meta a:focus-visible {
+  outline: var(--focus);
+  outline-offset: var(--focus-offset);
+}
+
+/* Narrow number tables: tighter cells so five columns fit at 360 px. */
+.ds-perclass thead th,
+.ds-confusion thead th {
+  letter-spacing: 0.04em;
+}
+
+.ds .ds-perclass th,
+.ds .ds-perclass td,
+.ds .ds-confusion th,
+.ds .ds-confusion td {
+  padding: 8px 4px;
+}
+
+/* Tape on the kraft slip: a little more opaque than the shared strip so it reads against paper. */
+.ds-gaps__slip .ui-tape {
+  width: 104px;
+  height: 26px;
+  background: linear-gradient(180deg, rgba(241, 233, 212, 0.9), rgba(229, 217, 188, 0.86));
+  box-shadow: 0 1px 2px rgba(31, 28, 23, 0.16);
+}
