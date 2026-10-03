@@ -19,7 +19,7 @@ import type { Activity, DetectedChange, Fix, HourBudget, Reason } from '../share
 import { DAY, DEMO_NOW, HOUR, MINUTE, TZ_OFFSET_MS, localDayStart } from '../shared/lib/clock'
 import { createRng, gaussian } from '../shared/lib/random'
 import { HERD, herdMember, type HerdMember } from './herd'
-import { ARICHA_WATER, MARKET, distanceKm } from './places'
+import { ARICHA_WATER, MARKET, TOWN_TAP, distanceKm } from './places'
 import { climbBetween, pointAt, routeLengthKm, type RoutePoint } from './routes'
 import { weatherAt } from './weather'
 import { SCENARIOS, scenariosFor, type Scenario } from './scenarios'
@@ -44,7 +44,11 @@ const FREE_CLIMB_PER_MIN = 0.3 // metres per minute of grazing steps on the slop
 interface Leg {
   start: number
   end: number
-  kind: 'walk' | 'stand' | 'water'
+  /**
+   * walk: work walking along a route. stand: loading or unloading (counts as work).
+   * water: a water stop. wait: tethered at a place in free time (eating, standing).
+   */
+  kind: 'walk' | 'stand' | 'water' | 'wait'
   routeId?: string
   reverse?: boolean
   kmPerMin?: number
@@ -77,6 +81,7 @@ function homePoint(household: string): RoutePoint {
 const ARICHA_PT = routeEnd('market-aricha', true)
 const MARKET_PT = routeEnd('market-aricha', false)
 const RIDGE_PT = routeEnd('north-slope', true)
+const TAP_PT: RoutePoint = { lat: TOWN_TAP.lat, lon: TOWN_TAP.lon, eleM: MARKET_PT.eleM }
 const WATER_PT: RoutePoint = { lat: ARICHA_WATER.lat, lon: ARICHA_WATER.lon, eleM: routeEnd('domorso-water', true).eleM }
 
 /** Distance along the market-to-home route where Kito falls: 1.2 km in a straight line from the market. */
@@ -126,6 +131,10 @@ function planDay(m: HerdMember, dayStart: number, daysAgo: number): DayPlan {
     legs.push({ start: cur, end: cur + min, kind: water ? 'water' : 'stand', at })
     cur += min
   }
+  const wait = (min: number, at: RoutePoint) => {
+    legs.push({ start: cur, end: cur + min, kind: 'wait', at })
+    cur += min
+  }
   const startAt = (h: number) => {
     cur = Math.max(cur, Math.round(h * 60 + (rng() - 0.4) * 30))
   }
@@ -155,7 +164,9 @@ function planDay(m: HerdMember, dayStart: number, daysAgo: number): DayPlan {
       } else if (dow === 2 || dow === 6) {
         startAt(p.workStart + 0.5)
         walk(`${hh}-market`, false, true)
-        stand(90 + Math.round(rng() * 60), MARKET_PT)
+        stand(12 + Math.round(rng() * 6), MARKET_PT)
+        stand(8, TAP_PT, true)
+        wait(70 + Math.round(rng() * 60), MARKET_PT)
         walk(`${hh}-market`, true, false)
         jobEnds.push(cur)
       }
@@ -193,7 +204,7 @@ function planDay(m: HerdMember, dayStart: number, daysAgo: number): DayPlan {
       for (let i = 0; i < shuttles; i++) {
         walk('market-aricha', false, true, 1, true)
         stand(8 + Math.round(rng() * 5), ARICHA_PT)
-        if (i === 1 && withWater) stand(8 + Math.round(rng() * 5), WATER_PT, true)
+        if ((i === 1 || i === 3) && withWater) stand(8 + Math.round(rng() * 5), WATER_PT, true)
         walk('market-aricha', true, false, 1, true)
         if (i < shuttles - 1) stand(15 + Math.round(rng() * 8), MARKET_PT)
       }
@@ -203,7 +214,7 @@ function planDay(m: HerdMember, dayStart: number, daysAgo: number): DayPlan {
         const d = fallDistanceKm(toMarket)
         const kmPerMin = p.speedEmpty / 60
         const legStart = fallMin - Math.round(d / kmPerMin)
-        if (cur < legStart) stand(legStart - cur, MARKET_PT)
+        if (cur < legStart) wait(legStart - cur, MARKET_PT)
         legs.push({ start: cur, end: fallMin, kind: 'walk', routeId: toMarket, reverse: true, kmPerMin: d / (fallMin - cur) })
         fallAt = pointAt(toMarket, d, true)
         falls.push(fallMin)
@@ -217,19 +228,20 @@ function planDay(m: HerdMember, dayStart: number, daysAgo: number): DayPlan {
       const r = `${hh}-market`
       startAt(8)
       walk(r, false, false, 1, true)
-      stand(60 + Math.round(rng() * 60), MARKET_PT)
+      if (withWater) stand(8, TAP_PT, true)
+      wait(60 + Math.round(rng() * 60), MARKET_PT)
       walk(r, true, false, 1, true)
       if (has('longWork')) {
         // A second ride straight away, out until early afternoon without water.
         walk(r, false, false, 1, true)
-        stand(75, MARKET_PT)
+        wait(75, MARKET_PT)
         walk(r, true, false, 1, true)
       }
       jobEnds.push(cur)
       if (!has('longWork') && (dow === 3 || dow === 6)) {
         startAt(15)
         walk(r, false, false, 1, true)
-        stand(40 + Math.round(rng() * 30), MARKET_PT)
+        wait(40 + Math.round(rng() * 30), MARKET_PT)
         walk(r, true, false, 1, true)
         jobEnds.push(cur)
       }
@@ -319,6 +331,7 @@ function budgetsForDay(m: HerdMember, plan: DayPlan, nowMin: number, fromMin: nu
   codes.fill(FREE)
   for (const [s, e] of plan.gaps) codes.fill(MISSING, s, e)
   for (const l of plan.legs) {
+    if (l.kind === 'wait') continue
     const c = l.kind === 'walk' ? WALK : l.kind === 'water' ? WATER : STAND
     for (let i = Math.max(0, l.start); i < Math.min(1440, l.end); i++) if (codes[i] === FREE) codes[i] = c
   }

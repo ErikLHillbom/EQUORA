@@ -4,11 +4,18 @@
 // not working. Work hours are set by the owner, not the animal, so an hour with fewer than
 // 15 free minutes has no behaviour value (NaN). This keeps a Sunday off from looking like
 // dullness, and a dull donkey still shows up in the hours after work.
+//
+// Activity and eating are shares of the upright free minutes (free minutes not spent lying).
+// Lying is its own signal. If lying minutes also lowered activity and eating, one lying bout
+// after work would move three signals at once and look like a CHECK, and one lying bout must
+// never alarm on its own (Bukhari et al. 2022: 43% of pack donkeys sometimes lie down after loading).
 
 import type { HourBudget, SignalId } from '../shared/types'
 
 /** Below this many free minutes in an hour, behaviour signals are not measured. */
 export const MIN_FREE_MINUTES = 15
+/** Below this many upright free minutes, activity and eating are not measured. */
+export const MIN_UPRIGHT_MINUTES = 30
 
 export const BEHAVIOUR_SIGNALS: readonly SignalId[] = ['activity', 'lying', 'eating']
 
@@ -50,6 +57,11 @@ export function isFreeHour(b: HourBudget): boolean {
   return freeMinutes(b) >= MIN_FREE_MINUTES
 }
 
+/** Free minutes the animal was on its feet. */
+export function uprightFreeMinutes(b: HourBudget): number {
+  return Math.max(0, freeMinutes(b) - b.minutes.lie)
+}
+
 /**
  * Hourly workload, 0 to 100: 70 points for a full hour of work, plus up to 30 for climbing
  * (1 point per 5 m climbed). An assumption to rank hours, not a physiological measure.
@@ -61,11 +73,12 @@ export function workloadOf(b: HourBudget): number {
 /**
  * The value of one signal for one hour, or NaN when the hour cannot say.
  *
- * - activity: share of free minutes spent walking, trotting, eating or rolling. Eating counts
- *   as active because a dull donkey first stops eating and walking and stands or lies instead.
+ * - activity: share of upright free minutes spent walking, trotting, eating or rolling. Eating
+ *   counts as active because a dull donkey first stops eating and walking and just stands.
  *   We use minutes, not ODBA, because minutes come straight from the classifier and mean the same
  *   for every animal, while ODBA depends on collar fit. Work walking is taken out.
- * - lying, eating: minutes per 60 free minutes.
+ * - eating: minutes per 60 upright free minutes.
+ * - lying: minutes per 60 free minutes.
  * - workload: see workloadOf.
  * - distance (km), climb (m), temperature (deg C): as recorded in the hour.
  * - waterDebt: not in the budget. It comes from the forecast domain's water model, so NaN here.
@@ -74,17 +87,18 @@ export function signalValue(b: HourBudget, signal: SignalId): number {
   if (b.coverage <= 0) return NaN
   const m = b.minutes
   const free = freeMinutes(b)
+  const upright = free - m.lie
   switch (signal) {
     case 'activity': {
-      if (free < MIN_FREE_MINUTES) return NaN
+      if (free < MIN_FREE_MINUTES || upright < MIN_UPRIGHT_MINUTES) return NaN
       const active = m.walk + m.trot + m.eat + m.roll
       const workMoving = Math.min(b.workMin, m.walk + m.trot)
-      return Math.max(0, Math.min(1, (active - workMoving) / free))
+      return Math.max(0, Math.min(1, (active - workMoving) / upright))
     }
     case 'lying':
       return free < MIN_FREE_MINUTES ? NaN : (m.lie * 60) / free
     case 'eating':
-      return free < MIN_FREE_MINUTES ? NaN : (m.eat * 60) / free
+      return free < MIN_FREE_MINUTES || upright < MIN_UPRIGHT_MINUTES ? NaN : Math.min(60, (m.eat * 60) / upright)
     case 'workload':
       return workloadOf(b)
     case 'distance':

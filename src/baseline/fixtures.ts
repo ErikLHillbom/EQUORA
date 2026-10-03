@@ -36,7 +36,7 @@ export function makeHour(hourStart: number, o: HourOverrides = {}): HourBudget {
 /**
  * A quiet, regular animal: `days` whole days before the day of `now`, then today's hours up to
  * now. Free time: eating about 30 min and walking about 5 min per hour by day, lying 20 min per
- * hour from 01:00 to 04:00. `shape` can change any hour.
+ * hour from 01:00 to 04:00, water at 06:00, 12:00, 18:00 and 21:00. `shape` can change any hour.
  */
 export function synthHistory(
   now: number,
@@ -53,7 +53,14 @@ export function synthHistory(
     const lie = night ? 20 : 0
     const eat = Math.round((night ? 20 : 30) * (1 + 0.08 * gaussian(rng)))
     const walk = Math.max(0, Math.round(5 * (1 + 0.2 * gaussian(rng))))
-    out.push(shape(t, h, makeHour(t, { minutes: { eat, walk, lie }, lyingBouts: night && h === 1 ? 1 : 0, upDowns: h === 4 ? 1 : 0 })))
+    const waterStopMin = h === 6 || h === 12 || h === 18 || h === 21 ? 8 : 0
+    out.push(
+      shape(
+        t,
+        h,
+        makeHour(t, { minutes: { eat, walk, lie }, lyingBouts: night && h === 1 ? 1 : 0, upDowns: h === 4 ? 1 : 0, waterStopMin }),
+      ),
+    )
   }
   return out
 }

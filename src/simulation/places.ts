@@ -52,6 +52,15 @@ export const MARKET: Place = {
   kind: 'market',
 }
 
+/** Public water tap by the market where animals drink on market days. APPROXIMATE: no OSM feature. */
+export const TOWN_TAP: Place = {
+  id: 'town-tap',
+  nameKey: 'simulation.place.townTap',
+  lat: 6.1603,
+  lon: 38.2038,
+  kind: 'water',
+}
+
 /** Animal health post. APPROXIMATE: placed in town, no OSM feature. Used for "call help". */
 export const CLINIC: Place = {
   id: 'clinic',
@@ -81,7 +90,7 @@ export const HOMES: HomePlace[] = [
 /** The far end of the northern slope route: the ridge below Benk'O (OSM node 1150895460). */
 export const NORTH_RIDGE = { lat: 6.2085, lon: 38.2101 } as const
 
-export const PLACES: Place[] = [ARICHA, ARICHA_WATER, MARKET, CLINIC, ...HOMES]
+export const PLACES: Place[] = [ARICHA, ARICHA_WATER, MARKET, TOWN_TAP, CLINIC, ...HOMES]
 
 export function placeById(id: string): Place | undefined {
   return PLACES.find((p) => p.id === id)

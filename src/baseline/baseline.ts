@@ -103,7 +103,8 @@ export function computeBaseline(
     values[localHour(b.hourStart)].push({ v, day: localDayStart(b.hourStart) })
   }
 
-  const byHour: BaselineCell[] = []
+  const pools: { v: number; day: number }[][] = []
+  const medians: number[] = []
   for (let h = 0; h < 24; h++) {
     const bin = Math.floor(h / binHours) * binHours
     let pool: { v: number; day: number }[] = []
@@ -115,10 +116,22 @@ export function computeBaseline(
         pool = pool.concat(values[(bin - w + 24) % 24], values[(bin + binHours - 1 + w) % 24])
       }
     }
-    const vs = pool.map((p) => p.v)
-    const med = median(vs)
-    const spread = Math.max(info.spreadFloor, scaledMad(vs, med) || 0)
-    byHour.push({ median: med, spread, n: new Set(pool.map((p) => p.day)).size })
+    pools.push(pool)
+    medians.push(median(pool.map((p) => p.v)))
+  }
+
+  // Spread: 14 values per hour give a noisy MAD. With 1-hour cells, the spread pools the
+  // deviations of the hour and its two neighbours, each from its own hour's median.
+  const byHour: BaselineCell[] = []
+  for (let h = 0; h < 24; h++) {
+    const cells = binHours === 1 ? [(h + 23) % 24, h, (h + 1) % 24] : [h]
+    const dev: number[] = []
+    for (const c of cells) {
+      if (!Number.isFinite(medians[c])) continue
+      for (const p of pools[c]) dev.push(Math.abs(p.v - medians[c]))
+    }
+    const spread = Math.max(info.spreadFloor, 1.4826 * median(dev) || 0)
+    byHour.push({ median: medians[h], spread, n: new Set(pools[h].map((p) => p.day)).size })
   }
   return { animalId: budgets[0]?.animalId ?? '', signal, byHour, daysOfData }
 }
