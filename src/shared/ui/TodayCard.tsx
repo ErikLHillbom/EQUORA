@@ -90,6 +90,8 @@ export interface TodayCardProps {
   dotMatrix?: boolean
   /** Adds the Experimental stamp (lying, rolling and head-position readouts). */
   experimental?: boolean
+  /** Underline a value outside the normal. Turn off on all but the one card that matters most. Default true. */
+  highlight?: boolean
   /** Seed for the underline wobble. */
   id?: string
   /** Optional footnote under the dot bar. */
@@ -108,6 +110,7 @@ export function TodayCard({
   decimals = 1,
   dotMatrix = false,
   experimental = false,
+  highlight = true,
   id,
   children,
   className,
@@ -132,7 +135,7 @@ export function TodayCard({
         {experimental && <RectStamp kind="experimental" id={`${seed}:exp`} />}
       </header>
       <p className="ui-today-value">
-        {outside ? (
+        {outside && highlight ? (
           <PencilUnderline state={state} id={seed}>
             {number}
           </PencilUnderline>

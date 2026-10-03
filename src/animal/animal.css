@@ -1,0 +1,315 @@
+/* Animal screen (case file) layout. Colours come from tokens; state colour lives in stamps,
+ * the pencil underline, the dot bars and the chart lines only. */
+
+.animal .ui-folder-sheet {
+  padding: var(--space-3);
+}
+
+@media (min-width: 420px) {
+  .animal .ui-folder-sheet {
+    padding: var(--space-4);
+  }
+}
+
+.animal-h2 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--size-name);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.animal-h3 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--size-lead);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.animal-lead {
+  margin: var(--space-2) 0 var(--space-3);
+  font-size: var(--size-small);
+  line-height: 1.45;
+  color: var(--graphite);
+}
+
+.animal-note {
+  margin: var(--space-2) 0 0;
+  font-size: var(--size-small);
+  line-height: 1.45;
+  color: var(--graphite);
+}
+
+/* ---------- Header ---------- */
+
+.animal-header {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.animal-header__meta {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: calc(-1 * var(--space-2));
+}
+
+.animal-header__updated {
+  margin-top: var(--space-2);
+}
+
+.animal-header__who {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.animal-header__ident {
+  min-width: 0;
+}
+
+.animal-header__name {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-serif);
+  font-size: var(--size-title);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.animal-header__line {
+  margin: 0;
+  font-size: var(--size-label);
+  letter-spacing: 0.03em;
+  line-height: 1.55;
+  color: var(--graphite);
+}
+
+.animal-header__drawing {
+  flex: none;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  margin: 10px 2px 0 0;
+}
+
+.animal-header__photo {
+  padding: 14px 6px 4px;
+  transform: rotate(1.2deg);
+}
+
+.animal-header__photo .ui-posture {
+  display: block;
+}
+
+.animal-header__pose {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-1);
+}
+
+.animal-header__state {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: var(--space-3);
+}
+
+.animal-header__reasons ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-2);
+  font-size: var(--size-body);
+  line-height: 1.4;
+}
+
+.animal-header__reasons li {
+  position: relative;
+  padding-left: 14px;
+}
+
+.animal-header__reasons li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 7px;
+  height: 1.5px;
+  background: var(--graphite);
+}
+
+.animal-header__reasons .ui-rectstamp {
+  margin-top: var(--space-3);
+}
+
+.animal-header__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ---------- What to do next ---------- */
+
+.animal-next .ui-slip {
+  padding: var(--space-4);
+  border-color: var(--ink);
+}
+
+.animal-next__list {
+  margin: 0;
+  padding-left: 1.4em;
+  display: grid;
+  gap: var(--space-3);
+  font-size: var(--size-body);
+  line-height: 1.45;
+}
+
+.animal-next__list li::marker {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.animal-whatif {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--hairline);
+}
+
+.animal-whatif .ui-ledger-wrap {
+  margin-top: var(--space-3);
+}
+
+.animal-whatif .ui-ledger th[scope='row'] {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* ---------- Sections ---------- */
+
+.animal-section > .ui-numhead {
+  margin-bottom: 0;
+}
+
+.animal-today {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.animal-today .ui-today {
+  padding: var(--space-3);
+}
+
+.animal-today .ui-today-number {
+  font-size: 1.75rem;
+}
+
+.animal-today .ui-today-value {
+  min-height: 0;
+}
+
+.animal-today__main {
+  grid-column: 1 / -1;
+}
+
+.animal-today__main .ui-today-value {
+  min-height: 52px;
+}
+
+.animal-today .ui-rectstamp--caps .ui-rectstamp-text {
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+}
+
+.animal-today .ui-today-foot {
+  font-size: var(--size-label);
+  line-height: 1.4;
+}
+
+/* ---------- Trends ---------- */
+
+.animal-trends__group {
+  margin-top: var(--space-2);
+}
+
+.animal-trends {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-4);
+}
+
+.animal-chart__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+/* ---------- Detected changes ---------- */
+
+.animal-log {
+  padding: 0 var(--space-3) var(--space-2);
+}
+
+.animal-log .ui-logentry-text {
+  margin: 0;
+}
+
+.animal-log__who {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: var(--size-small);
+  color: var(--graphite);
+}
+
+.animal-feedback {
+  display: grid;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.animal-feedback__ask {
+  margin: 0;
+  font-weight: 600;
+}
+
+.animal-feedback__buttons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.animal-feedback__buttons .ui-button {
+  padding-inline: 10px;
+  border-width: 1.5px;
+}
+
+.animal-feedback--closed {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.animal-feedback--closed .animal-note {
+  margin: 0;
+}
+
+.animal-log .ui-logentry-actions {
+  display: block;
+}
+
+/* ---------- What the tag cannot see ---------- */
+
+.animal-cannot p {
+  margin: var(--space-2) 0 0;
+  line-height: 1.45;
+}
