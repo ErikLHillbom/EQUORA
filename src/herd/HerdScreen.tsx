@@ -182,11 +182,11 @@ function FirstVisit({ row, now }: { row: HerdRow; now: number }) {
 }
 
 /**
- * Poses the 3D scene draws on this screen. Lying is left out for now: in our 360 px check the
- * scene drew a lying horse as standing with one hoof loose, while the still shows calm lying.
- * A drawing is information (DESIGN 7), so lying uses the still until the scene is fixed.
+ * Poses the 3D scene draws on this screen: all of them. Lying is built from bone turns
+ * (src/landing/ink/lyingPose.ts) and checked on a real GPU; headless software rendering drew it
+ * wrong, so screenshots in CI fall back to the still through canUse3D().
  */
-const POSES_3D: readonly Pose[] = ['standing', 'walking', 'trotting', 'grazing']
+const POSES_3D: readonly Pose[] = ['standing', 'walking', 'trotting', 'grazing', 'lying']
 
 /** The 3D ink animal, loaded after the page. The still drawing shows while it loads and on phones without WebGL. */
 function AnimalFigure({ species, pose, label }: { species: Species; pose: Pose; label: string }) {
