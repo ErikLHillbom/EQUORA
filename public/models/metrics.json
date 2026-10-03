@@ -1,0 +1,387 @@
+{
+  "version": "activity-v1",
+  "trainedAt": "2026-10-03T20:56:08+00:00",
+  "dataset": {
+    "name": "Horsing Around",
+    "citation": "Kamminga JW, Jan\u00dfen LM, Meratnia N, Havinga PJM. 2019. Horsing Around: a dataset comprising horse movement. Data 4(4):131.",
+    "doi": "10.4121/uuid:2e08745c-4178-4183-8551-f248c992cb14",
+    "url": "https://doi.org/10.4121/uuid:2e08745c-4178-4183-8551-f248c992cb14",
+    "licence": "CC0"
+  },
+  "subjectsUsed": [
+    "Bacardi",
+    "Driekus",
+    "Galoway",
+    "Happy",
+    "Niro",
+    "Noortje",
+    "Pan",
+    "Patron",
+    "Sense",
+    "Viva",
+    "Zafir"
+  ],
+  "subjectsInShippedModel": [
+    "Bacardi",
+    "Galoway",
+    "Happy",
+    "Niro",
+    "Noortje",
+    "Pan",
+    "Patron",
+    "Sense",
+    "Viva",
+    "Zafir"
+  ],
+  "replaySubject": "Driekus",
+  "windows": 49045,
+  "windowsPerClass": {
+    "stand": 2963,
+    "walk": 21687,
+    "trot": 14326,
+    "eat": 10069
+  },
+  "labelMap": {
+    "standing": "stand",
+    "walking-natural": "walk",
+    "walking-rider": "walk",
+    "trotting-natural": "trot",
+    "trotting-rider": "trot",
+    "grazing": "eat",
+    "eating": "eat",
+    "rolling": "roll"
+  },
+  "droppedWindows": {
+    "galloping-natural": 58,
+    "shaking": 14,
+    "rubbing": 3,
+    "scratch-biting": 161,
+    "galloping-rider": 2190,
+    "head-shake": 463,
+    "fighting": 17,
+    "scared": 3,
+    "jumping": 9
+  },
+  "labels": [
+    "stand",
+    "walk",
+    "trot",
+    "eat"
+  ],
+  "cvMethod": "leave-one-horse-out",
+  "model": {
+    "kind": "random forest",
+    "n_estimators": 30,
+    "class_weight": "balanced",
+    "max_features": "sqrt",
+    "max_depth": 10,
+    "min_samples_leaf": 50
+  },
+  "accuracy": 0.9612,
+  "macroF1": 0.9505,
+  "perClass": {
+    "stand": {
+      "precision": 0.9031,
+      "recall": 0.9463,
+      "f1": 0.9242,
+      "support": 2963
+    },
+    "walk": {
+      "precision": 0.973,
+      "recall": 0.9594,
+      "f1": 0.9662,
+      "support": 21687
+    },
+    "trot": {
+      "precision": 0.992,
+      "recall": 0.9862,
+      "f1": 0.9891,
+      "support": 14326
+    },
+    "eat": {
+      "precision": 0.9116,
+      "recall": 0.9337,
+      "f1": 0.9225,
+      "support": 10069
+    }
+  },
+  "confusion": {
+    "labels": [
+      "stand",
+      "walk",
+      "trot",
+      "eat"
+    ],
+    "rowsAreTrue": true,
+    "matrix": [
+      [
+        2804,
+        9,
+        0,
+        150
+      ],
+      [
+        4,
+        20807,
+        114,
+        762
+      ],
+      [
+        0,
+        197,
+        14129,
+        0
+      ],
+      [
+        297,
+        371,
+        0,
+        9401
+      ]
+    ]
+  },
+  "perFold": [
+    {
+      "heldOut": "Viva",
+      "windows": 1065,
+      "accuracy": 0.9925
+    },
+    {
+      "heldOut": "Happy",
+      "windows": 12746,
+      "accuracy": 0.9792
+    },
+    {
+      "heldOut": "Zafir",
+      "windows": 5700,
+      "accuracy": 0.9802
+    },
+    {
+      "heldOut": "Pan",
+      "windows": 178,
+      "accuracy": 0.9888
+    },
+    {
+      "heldOut": "Driekus",
+      "windows": 5441,
+      "accuracy": 0.9412
+    },
+    {
+      "heldOut": "Galoway",
+      "windows": 13089,
+      "accuracy": 0.95
+    },
+    {
+      "heldOut": "Patron",
+      "windows": 6742,
+      "accuracy": 0.9617
+    },
+    {
+      "heldOut": "Bacardi",
+      "windows": 2789,
+      "accuracy": 0.9168
+    },
+    {
+      "heldOut": "Niro",
+      "windows": 60,
+      "accuracy": 0.8833
+    },
+    {
+      "heldOut": "Sense",
+      "windows": 1217,
+      "accuracy": 0.9638
+    },
+    {
+      "heldOut": "Noortje",
+      "windows": 18,
+      "accuracy": 1.0
+    }
+  ],
+  "baseline": {
+    "model": "logistic regression (standardised features, balanced class weights)",
+    "accuracy": 0.9582,
+    "macroF1": 0.9451,
+    "perClass": {
+      "stand": {
+        "precision": 0.8729,
+        "recall": 0.9528,
+        "f1": 0.9111,
+        "support": 2963
+      },
+      "walk": {
+        "precision": 0.9786,
+        "recall": 0.9508,
+        "f1": 0.9645,
+        "support": 21687
+      },
+      "trot": {
+        "precision": 0.9938,
+        "recall": 0.9875,
+        "f1": 0.9907,
+        "support": 14326
+      },
+      "eat": {
+        "precision": 0.8951,
+        "recall": 0.934,
+        "f1": 0.9141,
+        "support": 10069
+      }
+    }
+  },
+  "tuning": {
+    "selection": "smallest forest within 0.005 macro F1 of the best",
+    "grid": [
+      {
+        "params": {
+          "max_depth": 8,
+          "min_samples_leaf": 5
+        },
+        "accuracy": 0.9633,
+        "macroF1": 0.9545,
+        "nodes": 7128
+      },
+      {
+        "params": {
+          "max_depth": 8,
+          "min_samples_leaf": 20
+        },
+        "accuracy": 0.9621,
+        "macroF1": 0.9526,
+        "nodes": 5150
+      },
+      {
+        "params": {
+          "max_depth": 8,
+          "min_samples_leaf": 50
+        },
+        "accuracy": 0.9608,
+        "macroF1": 0.9501,
+        "nodes": 3520
+      },
+      {
+        "params": {
+          "max_depth": 10,
+          "min_samples_leaf": 5
+        },
+        "accuracy": 0.9647,
+        "macroF1": 0.9555,
+        "nodes": 13182
+      },
+      {
+        "params": {
+          "max_depth": 10,
+          "min_samples_leaf": 20
+        },
+        "accuracy": 0.9629,
+        "macroF1": 0.953,
+        "nodes": 7536
+      },
+      {
+        "params": {
+          "max_depth": 10,
+          "min_samples_leaf": 50
+        },
+        "accuracy": 0.9612,
+        "macroF1": 0.9505,
+        "nodes": 4758
+      }
+    ]
+  },
+  "rollDecision": {
+    "rule": "keep roll if leave-one-horse-out precision and recall are both >= 0.3",
+    "withRoll": {
+      "precision": 0.0916,
+      "recall": 0.3243,
+      "f1": 0.1429,
+      "support": 37
+    },
+    "kept": false,
+    "windowsDropped": 37
+  },
+  "confidenceThreshold": 0.5,
+  "thresholdRule": "lowest top-class probability, from 0.5 up, with accuracy >= 0.9 on the leave-one-horse-out windows above it",
+  "thresholdCurve": [
+    {
+      "threshold": 0.5,
+      "coverage": 0.9968,
+      "accuracy": 0.9626
+    },
+    {
+      "threshold": 0.55,
+      "coverage": 0.9856,
+      "accuracy": 0.9672
+    },
+    {
+      "threshold": 0.6,
+      "coverage": 0.9739,
+      "accuracy": 0.9711
+    },
+    {
+      "threshold": 0.65,
+      "coverage": 0.962,
+      "accuracy": 0.9744
+    },
+    {
+      "threshold": 0.7,
+      "coverage": 0.9476,
+      "accuracy": 0.9779
+    },
+    {
+      "threshold": 0.75,
+      "coverage": 0.9308,
+      "accuracy": 0.9807
+    },
+    {
+      "threshold": 0.8,
+      "coverage": 0.9115,
+      "accuracy": 0.9836
+    },
+    {
+      "threshold": 0.85,
+      "coverage": 0.8875,
+      "accuracy": 0.9863
+    },
+    {
+      "threshold": 0.9,
+      "coverage": 0.8444,
+      "accuracy": 0.9894
+    },
+    {
+      "threshold": 0.95,
+      "coverage": 0.7593,
+      "accuracy": 0.9926
+    }
+  ],
+  "thresholdReached": true,
+  "coverageAtThreshold": 0.9968,
+  "accuracyAtThreshold": 0.9626,
+  "modelBytes": 123201,
+  "modelNodes": 4450,
+  "featureNames": [
+    "mag_mean",
+    "mag_std",
+    "mag_min",
+    "mag_max",
+    "mag_range",
+    "mag_p10",
+    "mag_p50",
+    "mag_p90",
+    "mag_skew",
+    "mag_kurt",
+    "mag_mad",
+    "mag_mcr",
+    "odba",
+    "vedba",
+    "vert_std",
+    "vert_range",
+    "horiz_mean",
+    "dom_freq",
+    "dom_power",
+    "band_0_1",
+    "band_1_3",
+    "band_3_6",
+    "band_6_12"
+  ],
+  "hz": 25,
+  "windowSeconds": 2
+}
