@@ -114,11 +114,14 @@ export function useTagRun(source: InputSource, scenario: ScenarioId) {
     }
   }, [])
 
-  // A new scenario or input starts from a clean tag.
+  // A new scenario or input starts from a clean tag. Runs again once the recorded horse has loaded.
+  const loaded = status !== 'loading'
   useEffect(() => {
     if (replay.current) stream.current = buildScenario(replay.current, scenario, DEMO_NOW)
+    // Resetting the run is the point of this effect: the stream it plays has just changed.
+    // oxlint-disable-next-line react/set-state-in-effect
     resetRun()
-  }, [scenario, source, resetRun, status === 'loading'])
+  }, [scenario, source, resetRun, loaded])
 
   useEffect(() => stopTimers, [stopTimers])
 
