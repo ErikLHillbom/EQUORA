@@ -122,7 +122,7 @@ describe('recommendations', () => {
 
   it('sends someone to Kito now, with his last position', () => {
     expect(text('kito')[0]).toBe(
-      'Go to Kito now. Last position: 1.2 km north of the market, 6 minutes ago. Check if Kito can stand.',
+      'Go to Kito now. Kito is 1.2 km north of the market and has not moved for 6 minutes. Check if Kito can stand.',
     )
   })
 

@@ -7,12 +7,12 @@ import type { StringTable } from '../i18n'
 // Amharic below is machine-made. It needs a native speaker check before anyone relies on it.
 export const strings: StringTable = {
   en: {
-    'forecast.rec.goNow': 'Go to {name} now. Last position: {km} km {dir} of the {place}, {minutes} minutes ago.',
-    'forecast.rec.goNowAt': 'Go to {name} now. Last position: at the {place}, {minutes} minutes ago.',
+    'forecast.rec.goNow': 'Go to {name} now. {name} is {km} km {dir} of the {place} and has not moved for {minutes} minutes.',
+    'forecast.rec.goNowAt': 'Go to {name} now. {name} is at the {place} and has not moved for {minutes} minutes.',
     'forecast.rec.goNowNoPosition': 'Go to {name} now.',
     'forecast.rec.goNowStand':
-      'Go to {name} now. Last position: {km} km {dir} of the {place}, {minutes} minutes ago. Check if {name} can stand.',
-    'forecast.rec.goNowAtStand': 'Go to {name} now. Last position: at the {place}, {minutes} minutes ago. Check if {name} can stand.',
+      'Go to {name} now. {name} is {km} km {dir} of the {place} and has not moved for {minutes} minutes. Check if {name} can stand.',
+    'forecast.rec.goNowAtStand': 'Go to {name} now. {name} is at the {place} and has not moved for {minutes} minutes. Check if {name} can stand.',
     'forecast.rec.goNowNoPositionStand': 'Go to {name} now. Check if {name} can stand.',
     'forecast.rec.restless': 'Stop work. Stay with {name} and watch for more rolling or getting up and down.',
     'forecast.rec.dullNotEating': 'Check gums and droppings. A donkey that stops eating needs help the same day.',
