@@ -1,0 +1,422 @@
+/* Herd home and Statistics layout. Colours come only from tokens; state colour lives in stamps. */
+
+.herd-label {
+  display: block;
+  margin-bottom: var(--space-2);
+  /* Flat paper knockout so the label never sits on grain. */
+  width: fit-content;
+  padding: 2px 6px 2px 0;
+  background: var(--paper);
+}
+
+.herd-h2 {
+  font-family: var(--font-serif);
+  font-size: var(--size-name);
+  width: fit-content;
+  padding-right: 8px;
+  background: var(--paper);
+}
+
+.herd-note {
+  font-size: var(--size-small);
+  color: var(--graphite);
+  line-height: 1.4;
+}
+
+.herd-ids {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--size-label);
+  letter-spacing: 0.04em;
+  color: var(--graphite);
+  line-height: 1.4;
+}
+
+/* ---------- Visit first ---------- */
+
+/* A window onto the drawing: the still and the 3D scene have wide margins, so the frame is a
+   little larger than the window and centred on the animal. */
+.herd-figure {
+  position: relative;
+  height: 210px;
+  overflow: hidden;
+}
+
+.herd-figure__frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(120%, 420px);
+  aspect-ratio: 4 / 3;
+  transform: translate(-50%, -54%);
+  /* The still is printed on paper: multiply lets it sit on the page without a box. The frame
+     blends as a whole, because its transform isolates anything inside it. */
+  mix-blend-mode: multiply;
+}
+
+@media (min-width: 480px) {
+  .herd-figure {
+    height: 260px;
+  }
+}
+
+.herd-figure img,
+.herd-figure__still {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.herd-figure__scene {
+  width: 100%;
+  height: 100%;
+}
+
+.herd-first__slip {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.herd-first__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+.herd-first__head .ui-statestamp--large {
+  flex: none;
+  min-width: 84px;
+}
+
+.herd-first__who {
+  min-width: 0;
+  padding-top: 4px;
+}
+
+.herd-first__name {
+  font-family: var(--font-serif);
+  font-size: var(--size-title);
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.herd-first__reason {
+  font-size: var(--size-lead);
+  line-height: 1.4;
+}
+
+.herd-first__rec {
+  font-size: var(--size-body);
+  line-height: 1.45;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--ink);
+}
+
+/* ---------- The herd now: five stamps with a count each ---------- */
+
+.herd-counts__list {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.herd-count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  min-height: 88px;
+  padding: 10px 2px 8px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-card);
+  background: var(--paper-raised);
+  color: var(--ink);
+  text-decoration: none;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a.herd-count:focus-visible {
+  outline: var(--focus);
+  outline-offset: var(--focus-offset);
+}
+
+a.herd-count[aria-current='true'] {
+  border-color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+
+.herd-count--zero {
+  color: var(--graphite);
+  background: transparent;
+  border-style: dashed;
+}
+
+.herd-count__n {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 1.375rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.herd-count__word {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+
+/* ---------- Animal list ---------- */
+
+.herd-list__head {
+  margin-bottom: var(--space-4);
+}
+
+.herd-list__head .herd-note {
+  width: fit-content;
+  background: var(--paper);
+}
+
+.herd-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-3);
+  margin-bottom: var(--space-4);
+  padding: var(--space-3);
+  background: var(--paper-raised);
+  border: 1px dashed var(--graphite);
+  border-radius: var(--radius-card);
+}
+
+.herd-cards {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.herd-card {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-3);
+  min-height: 48px;
+  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-3);
+  border-radius: var(--radius-card);
+  color: var(--ink);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.herd-card:focus-visible {
+  outline: var(--focus);
+  outline-offset: var(--focus-offset);
+}
+
+.herd-card:active {
+  background: var(--paper);
+}
+
+.herd-card__drawing {
+  margin-top: 6px;
+}
+
+.herd-card__body {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.herd-card__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px var(--space-2);
+}
+
+.herd-card__name {
+  font-family: var(--font-serif);
+  font-size: var(--size-name);
+  line-height: 1.15;
+}
+
+.herd-card__reason {
+  font-size: var(--size-small);
+  line-height: 1.4;
+  margin: 2px 0;
+}
+
+.herd-card .ui-rectstamp {
+  justify-self: start;
+  margin: 4px 0;
+}
+
+/* Compact rows for large herds: no drawing, reason on one line. */
+.herd-cards--compact {
+  gap: var(--space-2);
+}
+
+.herd-card--compact {
+  grid-template-columns: minmax(0, 1fr);
+  padding: var(--space-2) var(--space-3);
+}
+
+.herd-card--compact .herd-card__name {
+  font-size: var(--size-lead);
+}
+
+.herd-card--compact .herd-card__reason {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.herd-why {
+  text-align: center;
+}
+
+/* ---------- Statistics ---------- */
+
+.stats-slip {
+  margin-top: var(--space-3);
+  padding-inline: var(--space-3);
+}
+
+.stats-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.stats-scroll .ui-ledger-wrap {
+  overflow: visible;
+}
+
+.stats-scroll:focus-visible {
+  outline: var(--focus);
+  outline-offset: var(--focus-offset);
+}
+
+.stats-ledger {
+  min-width: 520px;
+}
+
+.stats-ledger th[scope='col'] {
+  vertical-align: bottom;
+  line-height: 1.25;
+}
+
+/* The animal column stays in view while the numbers scroll. */
+.stats-ledger th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--paper-raised);
+  box-shadow: 1px 0 0 var(--rule);
+}
+
+.stats-ledger td {
+  white-space: nowrap;
+}
+
+.stats-ledger .stats-col-activity {
+  min-width: 112px;
+}
+
+.stats-animal {
+  min-width: 112px;
+  padding-right: var(--space-3) !important;
+}
+
+.stats-animal__link {
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  min-height: 48px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.stats-animal__link:focus-visible {
+  outline: var(--focus);
+  outline-offset: 0;
+}
+
+.stats-animal__name {
+  font-family: var(--font-serif);
+  font-size: var(--size-lead);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.stats-animal__species {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--graphite);
+}
+
+.stats-animal__link .ui-statestamp {
+  margin-top: 2px;
+}
+
+.stats-animal__link--plain {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-serif);
+  font-size: var(--size-body);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.stats-foot {
+  margin-top: var(--space-3);
+}
+
+.stats-insights {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stats-insights li {
+  position: relative;
+  padding-left: 18px;
+  line-height: 1.45;
+}
+
+/* A small ink tick in the margin, like a hand-made list. */
+.stats-insights li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0.62em;
+  width: 8px;
+  height: 2px;
+  background: var(--ink);
+  transform: rotate(-8deg);
+}
+
+.stats-insights li + li {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--rule);
+}
+
+.stats-insights li + li::before {
+  top: calc(var(--space-3) + 0.62em);
+}
