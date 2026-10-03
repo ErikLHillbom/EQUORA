@@ -172,13 +172,15 @@ Colic and health
 - Getahun YA et al. 2024. Equine helminths in Gamo Gofa Zone. J Vet Sci. https://pubmed.ncbi.nlm.nih.gov/38834511/ (90.4%)
 - Merridale-Punter MS et al. 2022. Working equid lameness: systematic review and meta-analysis. Animals 12(22):3100. https://pubmed.ncbi.nlm.nih.gov/36428328/ (lameness 29.9%, 95% CI 17 to 47; gait abnormality 62.9%, 95% CI 31 to 87)
 - Merridale-Punter MS et al. 2024. Equipment-related wounds in working equids of Oromia. Animal Welfare 33:e42. https://pubmed.ncbi.nlm.nih.gov/39600354/ (72.6% of 369)
+- Geiger M et al. 2020. Working equids and household livelihoods. Front Vet Sci. https://doi.org/10.3389/fvets.2020.00060 (income lost when an equid is lost)
+- Merridale-Punter MS et al. 2024. Interviews with women owners of working equids. CABI One Health. https://doi.org/10.1079/cabionehealth.2024.0023 (read through a summary only)
 - Bukhari SSUH et al. 2022. Welfare concerns for mounted load carrying by working donkeys in Pakistan. Front Vet Sci. https://doi.org/10.3389/fvets.2022.886020 (332 owners; 87.4% carried more than half bodyweight; 43.4% sometimes lie down after loading)
 
 Sensors and detection
 - Eerdekens A et al. 2024. Automatic early detection of induced colic in horses using accelerometer devices. Equine Vet J 56(6):1229-1242. https://pubmed.ncbi.nlm.nih.gov/38318654
 - Giannone et al. 2025. Scoping review of technology to monitor horse behaviour and health. J Equine Vet Sci 155. https://pubmed.ncbi.nlm.nih.gov/41242474/
-- Eerdekens A et al. 2020. Resampling and data augmentation for equine behaviour classification. Comput Electron Agric 168 (25 Hz result).
-- Congiu et al. 2024. Tri-axial accelerometer data to predict behaviour of grazing donkeys. Comput Electron Agric 227:109582.
+- Eerdekens A et al. 2020. Automatic equine activity detection by convolutional neural networks using accelerometer data. Comput Electron Agric 168:105139. https://doi.org/10.1016/j.compag.2019.105139 (leg sensors; 25 Hz enough for known horses)
+- Congiu et al. 2024. Tri-axial accelerometer data to predict behaviour of grazing donkeys. Comput Electron Agric 227:109582. https://doi.org/10.1016/j.compag.2024.109582
 - Auer U et al. 2021. Review of horse time budgets. https://pmc.ncbi.nlm.nih.gov/articles/PMC8002676/
 
 Datasets
