@@ -53,6 +53,7 @@ export const strings: StringTable = {
     'shared.today.normalFor': 'Normal for {name}: {low} to {high} {unit}',
     'shared.today.normalForNoUnit': 'Normal for {name}: {low} to {high}',
     'shared.today.learning': 'Normal not learned yet',
+    'shared.today.noData': 'No data',
     'shared.dotbar.label': 'Today {value}. Normal {low} to {high}.',
     'shared.dotbar.outside': 'Today {value} is outside the normal {low} to {high}.',
 
