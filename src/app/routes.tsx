@@ -13,7 +13,7 @@ export interface AppRoute {
 
 export const ROUTES: readonly AppRoute[] = [
   { path: '/', Component: fromPlaceholders('HerdPlaceholder') },
-  { path: '/map', Component: fromPlaceholders('MapPlaceholder') },
+  { path: '/map', Component: lazy(() => import('../map/MapScreen')) },
   { path: '/animal/:id', Component: fromPlaceholders('AnimalPlaceholder') },
   { path: '/tag', Component: lazy(() => import('../tag/TagScreen')) },
   { path: '/stats', Component: fromPlaceholders('StatsPlaceholder') },
