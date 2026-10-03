@@ -1,4 +1,4 @@
-// Small geometry helpers for hand-drawn SVG: smooth curves through points, thick limbs, seeds.
+// Small geometry helpers for hand-drawn SVG: smooth curves through points, pencil marks, seeds.
 import { createRng, hashString } from '../lib/random'
 
 export type Pt = readonly [number, number]
@@ -27,31 +27,6 @@ export function catmullRom(points: readonly Pt[], closed = false, tension = 1): 
     d += `C${r1(c1x)} ${r1(c1y)} ${r1(c2x)} ${r1(c2y)} ${r1(p2[0])} ${r1(p2[1])}`
   }
   return closed ? `${d}Z` : d
-}
-
-/** A thick tapered polyline (a leg, a tail) as a closed filled path with a round end. */
-export function limb(points: readonly Pt[], widths: readonly number[]): string {
-  const n = points.length
-  const left: Pt[] = []
-  const right: Pt[] = []
-  for (let i = 0; i < n; i++) {
-    const prev = points[Math.max(0, i - 1)]
-    const next = points[Math.min(n - 1, i + 1)]
-    let dx = next[0] - prev[0]
-    let dy = next[1] - prev[1]
-    const len = Math.hypot(dx, dy) || 1
-    dx /= len
-    dy /= len
-    const w = (widths[i] ?? widths[widths.length - 1]) / 2
-    left.push([points[i][0] - dy * w, points[i][1] + dx * w])
-    right.push([points[i][0] + dy * w, points[i][1] - dx * w])
-  }
-  const endW = (widths[n - 1] ?? 2) / 2
-  let d = `M${r1(left[0][0])} ${r1(left[0][1])}`
-  for (let i = 1; i < n; i++) d += `L${r1(left[i][0])} ${r1(left[i][1])}`
-  d += `A${r1(endW)} ${r1(endW)} 0 0 0 ${r1(right[n - 1][0])} ${r1(right[n - 1][1])}`
-  for (let i = n - 2; i >= 0; i--) d += `L${r1(right[i][0])} ${r1(right[i][1])}`
-  return `${d}Z`
 }
 
 /** A wobbly closed loop around a box that runs past its start, like a pencil circle. */

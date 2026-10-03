@@ -40,19 +40,15 @@ MapLibre GL with PMTiles. Basemap from Protomaps (OpenStreetMap, ODbL), terrain 
 - Mono: IBM Plex Mono (SIL Open Font License 1.1).
 - Sans: the system font stack. Android ships Noto Sans Ethiopic for Amharic.
 - Colours: DESIGN 4 starting values, adjusted where the contrast test fails. Final values live in `src/shared/tokens/tokens.css`.
-- Illustrations: placeholder silhouettes until our own drawings exist. Mule uses the donkey set.
+- Illustrations: our own ink line drawings, see "Posture drawings" below. Mule uses the donkey set.
 
 ## Check stamp colour
 
 DESIGN 4 suggested #C98A1B for the CHECK stamp. As a graphic on paper it reached only 2.6:1, under the 3:1 that WCAG 1.4.11 asks for non-text marks. The stamp is now #B67B12. CHECK text stays #8A5A10 (5.2:1 on paper).
 
-## Posture drawings are placeholders
-
-The ten posture drawings (horse and donkey, five poses each) are simple silhouettes made in code, about 1.5 KB each, marked `data-placeholder`. The mule uses the donkey set. They will be replaced by our own drawings or by drawings based on Muybridge's "The Horse in Motion" (1878, public domain).
-
 ## Posture drawing sources
 
-The ten posture drawings are now our own line drawings. They replace the placeholder silhouettes described in the two notes above. The mule still uses the donkey set.
+The ten posture drawings are now our own line drawings. The mule still uses the donkey set.
 
 How they are made: each animal is 10 to 14 pen strokes, written as points in `src/shared/ui/postures.ts` and drawn in code as filled ink ribbons that swell in the middle and taper to round ends. The hand-made wobble comes from seeded jitter on the points, so a drawing is the same on every render. Dark ink sits only on the mane, the tail tip and the hooves. Light hatching sits on the far legs and under the belly. No file in `public/art/` is used.
 
