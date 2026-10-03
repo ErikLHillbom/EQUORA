@@ -55,15 +55,35 @@ describe('shared primitives', () => {
     expect(screen.getByRole('img', { name: 'Today 2.1 is outside the normal 6.0 to 8.0.' })).toBeInTheDocument()
   })
 
-  it('posture drawings exist for both species and all poses, each well under 8 KB', () => {
+  it('posture drawings exist for both species and all poses, each under 8 KB and all under 80 KB', () => {
+    let total = 0
     for (const species of ['horse', 'donkey'] as const) {
       for (const pose of ['standing', 'walking', 'trotting', 'grazing', 'lying'] as const) {
-        const { parts } = postureShapes(species, pose)
-        expect(parts.join('').length).toBeLessThan(6000)
+        const { ink, hatch, outline } = postureShapes(species, pose)
+        const fresh = ink.length + hatch.length
+        expect(fresh).toBeGreaterThan(1000)
+        expect(fresh).toBeLessThan(8000)
+        expect(outline.length).toBeLessThan(8000)
+        total += fresh
       }
     }
+    expect(total).toBeLessThan(80000)
     render(<PostureDrawing species="mule" pose="lying" stale />)
     expect(screen.getByRole('img', { name: 'Mule, lying, old data' })).toBeInTheDocument()
+  })
+
+  it('posture drawings are the same on every render and are no longer placeholders', () => {
+    const a = render(<PostureDrawing species="donkey" pose="walking" />).container.innerHTML
+    const b = render(<PostureDrawing species="donkey" pose="walking" />).container.innerHTML
+    expect(a).toBe(b)
+    expect(a).not.toContain('data-placeholder')
+  })
+
+  it('a stale posture drawing has only graphite lines: no ink fill, no hatching', () => {
+    const { container } = render(<PostureDrawing species="horse" pose="standing" stale />)
+    expect(container.querySelector('.ui-posture-line')).not.toBeNull()
+    expect(container.querySelector('.ui-posture-ink')).toBeNull()
+    expect(container.querySelector('.ui-posture-hatch')).toBeNull()
   })
 
   it('the bottom nav has five links and marks the current page', () => {

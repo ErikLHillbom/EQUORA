@@ -934,23 +934,27 @@
   overflow: visible;
 }
 
-.ui-posture-figure {
+/* Ink only. Each stroke is a filled ribbon that swells in the middle like a pressed pencil. */
+.ui-posture-ink {
   fill: var(--ink);
 }
 
-.ui-posture--stale .ui-posture-figure {
-  fill: var(--graphite);
-}
-
-.ui-posture--stale feFlood {
-  flood-color: var(--graphite);
-}
-
-.ui-posture-ground {
-  stroke: var(--graphite);
-  stroke-width: 0.8;
+.ui-posture-hatch {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 0.7;
   stroke-linecap: round;
-  stroke-dasharray: 5 3;
+  opacity: 0.7;
+}
+
+/* Stale: thin broken graphite lines, no hatching, no dark masses. Old data never looks healthy. */
+.ui-posture-line {
+  fill: none;
+  stroke: var(--graphite);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 2.4 2;
 }
 
 /* Inside flat sheets there is no grain, so no knockout. */
