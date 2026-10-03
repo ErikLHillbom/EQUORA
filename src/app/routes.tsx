@@ -17,7 +17,7 @@ export const ROUTES: readonly AppRoute[] = [
   { path: '/animal/:id', Component: fromPlaceholders('AnimalPlaceholder') },
   { path: '/tag', Component: lazy(() => import('../tag/TagScreen')) },
   { path: '/stats', Component: fromPlaceholders('StatsPlaceholder') },
-  { path: '/data', Component: fromPlaceholders('DataPlaceholder') },
+  { path: '/data', Component: lazy(() => import('../about-data/DataScreen')) },
   { path: '/why', Component: fromPlaceholders('WhyPlaceholder') },
   // Hidden component sheet. Not in the nav.
   { path: '/specimen', Component: lazy(() => import('../dev/SpecimenScreen')) },
