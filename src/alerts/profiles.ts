@@ -42,7 +42,7 @@ export const RULES = {
   dullHours: 3,
   /**
    * One-sided CUSUM on activity z for a sustained drop, z clipped to +/-3 so one odd hour
-   * cannot fire it alone. The usual k = 0.5 gave about 2 false alarms per animal per week on the
+   * cannot fire it alone. The usual k = 0.5 gave 1 to 1.4 false alarms per animal per week on the
    * simulated herd, because hourly activity spreads wider than a normal curve. k = 1 and h = 5
    * gave 10 in 12 animals over 120 days, and still fires after about 3 hours at z = -3.
    */
