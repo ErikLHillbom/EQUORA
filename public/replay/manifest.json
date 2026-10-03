@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "dataset": "Horsing Around (Kamminga et al. 2019)",
+  "doi": "10.4121/uuid:2e08745c-4178-4183-8551-f248c992cb14",
+  "licence": "CC0",
+  "subject": "Driekus",
+  "note": "Real neck collar recordings of one horse, resampled from 100 Hz to 25 Hz. This horse is left out of the shipped model.",
+  "hz": 25,
+  "windowSamples": 50,
+  "encoding": "int16le, milli-g, per window ax[50] then ay[50] then az[50]",
+  "scale": 1000,
+  "clips": [
+    {
+      "label": "stand",
+      "file": "stand.bin",
+      "windows": 90,
+      "sourceLabels": [
+        "standing"
+      ]
+    },
+    {
+      "label": "walk",
+      "file": "walk.bin",
+      "windows": 90,
+      "sourceLabels": [
+        "walking-natural",
+        "walking-rider"
+      ]
+    },
+    {
+      "label": "trot",
+      "file": "trot.bin",
+      "windows": 90,
+      "sourceLabels": [
+        "trotting-rider"
+      ]
+    },
+    {
+      "label": "eat",
+      "file": "eat.bin",
+      "windows": 90,
+      "sourceLabels": [
+        "grazing"
+      ]
+    },
+    {
+      "label": "roll",
+      "file": "roll.bin",
+      "windows": 13,
+      "sourceLabels": [
+        "rolling"
+      ]
+    }
+  ]
+}
