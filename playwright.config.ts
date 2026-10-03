@@ -8,6 +8,8 @@ export default defineConfig({
   outputDir: './test-results',
   fullyParallel: false,
   reporter: 'list',
+  // The first load decodes the model and builds 180 days of herd history; give it room.
+  expect: { timeout: 15_000 },
   use: {
     baseURL: `http://localhost:${PORT}`,
     viewport: { width: 360, height: 800 },
@@ -23,7 +25,10 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `npm run dev -- --port ${PORT} --strictPort`,
+    // Test the production build, which is what a phone gets. Set E2E_DEV=1 to test the dev server.
+    command: process.env.E2E_DEV
+      ? `npm run dev -- --port ${PORT} --strictPort`
+      : `npx vite build && npx vite preview --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}`,
     reuseExistingServer: false,
     timeout: 120_000,
