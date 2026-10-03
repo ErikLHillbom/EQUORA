@@ -64,7 +64,7 @@ test('the home placeholder shows the bottom nav with five items', async ({ page 
 test('the language switch changes the labels and flags the machine translation', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('button', { name: 'Amharic' }).click()
-  await expect(page.getByRole('heading', { name: 'እንስሳት' })).toBeVisible()
+  await expect(page.getByRole('navigation').getByText('መንጋ')).toBeVisible()
   await expect(page.locator('html')).toHaveAttribute('lang', 'am')
   await expect(page.locator('.app-machine-note')).toBeVisible()
   await page.screenshot({ path: 'e2e/screenshots/home-360-am.png', fullPage: true })
