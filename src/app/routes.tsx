@@ -1,10 +1,5 @@
-// Route table. Every screen is a lazy chunk.
-// To plug in a real screen, replace its placeholder import with the domain's screen module, e.g.
-//   { path: '/', Component: lazy(() => import('../herd/HerdScreen')) },
+// Route table. Every screen is a lazy chunk owned by its domain folder.
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
-
-const fromPlaceholders = (name: keyof typeof import('./placeholders')) =>
-  lazy(() => import('./placeholders').then((m) => ({ default: m[name] })))
 
 export interface AppRoute {
   path: string
@@ -13,7 +8,7 @@ export interface AppRoute {
 
 export const ROUTES: readonly AppRoute[] = [
   { path: '/', Component: lazy(() => import('../herd/HerdScreen')) },
-  { path: '/map', Component: fromPlaceholders('MapPlaceholder') },
+  { path: '/map', Component: lazy(() => import('../map/MapScreen')) },
   { path: '/animal/:id', Component: lazy(() => import('../animal/AnimalScreen')) },
   { path: '/tag', Component: lazy(() => import('../tag/TagScreen')) },
   { path: '/stats', Component: lazy(() => import('../herd/StatsScreen')) },
