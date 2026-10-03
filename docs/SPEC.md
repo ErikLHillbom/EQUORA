@@ -172,8 +172,8 @@ Colic and health
 - Getahun YA et al. 2024. Equine helminths in Gamo Gofa Zone. J Vet Sci. https://pubmed.ncbi.nlm.nih.gov/38834511/ (90.4%)
 - Merridale-Punter MS et al. 2022. Working equid lameness: systematic review and meta-analysis. Animals 12(22):3100. https://pubmed.ncbi.nlm.nih.gov/36428328/ (lameness 29.9%, 95% CI 17 to 47; gait abnormality 62.9%, 95% CI 31 to 87)
 - Merridale-Punter MS et al. 2024. Equipment-related wounds in working equids of Oromia. Animal Welfare 33:e42. https://pubmed.ncbi.nlm.nih.gov/39600354/ (72.6% of 369)
-- Geiger M et al. 2020. Working equids and household livelihoods. Front Vet Sci. https://doi.org/10.3389/fvets.2020.00060 (income lost when an equid is lost)
-- Merridale-Punter MS et al. 2024. Interviews with women owners of working equids. CABI One Health. https://doi.org/10.1079/cabionehealth.2024.0023 (read through a summary only)
+- Geiger M et al. 2020. Understanding the attitudes of communities to the social, economic, and cultural importance of working donkeys in rural, peri-urban, and urban areas of Ethiopia. Front Vet Sci. https://doi.org/10.3389/fvets.2020.00060 (income lost when an equid is lost)
+- Merridale-Punter MS et al. 2024. "The health of my donkey is my health": a female perspective on the contributions of working equids to One Health in two Ethiopian communities. CABI One Health 3(1). https://doi.org/10.1079/cabionehealth.2024.0023 (read through a summary only)
 - Bukhari SSUH et al. 2022. Welfare concerns for mounted load carrying by working donkeys in Pakistan. Front Vet Sci. https://doi.org/10.3389/fvets.2022.886020 (332 owners; 87.4% carried more than half bodyweight; 43.4% sometimes lie down after loading)
 
 Sensors and detection
