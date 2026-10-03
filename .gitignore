@@ -32,3 +32,6 @@ ml/data/interim
 test-results
 playwright-report
 e2e/screenshots/*.png
+
+# Agent worktrees
+.claude/
