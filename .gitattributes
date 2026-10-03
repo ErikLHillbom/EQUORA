@@ -6,3 +6,5 @@
 *.pmtiles binary
 *.mp3 binary
 *.wav binary
+*.webp binary
+*.pbf binary
