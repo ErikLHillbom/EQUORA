@@ -99,7 +99,7 @@ export default function SpecimenScreen() {
   return (
     <Paper nav={false} className="spec">
       <HeaderStrip
-        title="Equid Sentinel"
+        title="Equora"
         kicker="Specimen sheet"
         aside={<RectStamp kind="simulated" id="spec-sim" />}
         id="specimen"

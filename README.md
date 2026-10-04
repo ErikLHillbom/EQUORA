@@ -1,4 +1,4 @@
-# Equid Sentinel
+# Equora
 
 An offline neck tag for working donkeys and horses. It learns one animal's normal behaviour and tells the owner when to check it. It never diagnoses.
 

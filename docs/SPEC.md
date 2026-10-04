@@ -1,4 +1,4 @@
-# Equid Sentinel: build brief
+# Equora: build brief
 
 Read this first. Then read docs/DESIGN.md, which replaces parts of section 8. Where the two disagree, sections 5, 9, 10 and 11 of this file win.
 
@@ -23,7 +23,7 @@ The tag talks to the owner (light and voice). The app serves the health worker a
 
 ## 3. Product
 
-Equid Sentinel is an offline neck tag that learns one animal's normal behaviour and tells the owner when to check it. It never diagnoses. It answers one question: "Which of my animals is behaving differently from its own normal right now?"
+Equora is an offline neck tag that learns one animal's normal behaviour and tells the owner when to check it. It never diagnoses. It answers one question: "Which of my animals is behaving differently from its own normal right now?"
 
 The app has these parts:
 - Herd: every tagged animal, its state, and which one to visit first.

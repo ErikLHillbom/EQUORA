@@ -54,7 +54,7 @@ export function AppShell() {
         <div className="app-topbar-inner">
           <Link to="/" className="app-home" aria-label={t('shared.app.home')}>
             <AppMark />
-            <span className="app-name">Equid Sentinel</span>
+            <span className="app-name">Equora</span>
           </Link>
           {nav && <BottomNav placement="top" className="app-topnav" />}
           <LanguageSwitch />

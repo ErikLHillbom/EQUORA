@@ -8,8 +8,8 @@ import type { StringTable } from '../i18n'
 
 export const strings: StringTable = {
   en: {
-    'shared.app.name': 'Equid Sentinel',
-    'shared.app.home': 'Equid Sentinel, home',
+    'shared.app.name': 'Equora',
+    'shared.app.home': 'Equora, home',
 
     'shared.state.normal': 'Normal',
     'shared.state.water': 'Water',
@@ -79,8 +79,8 @@ export const strings: StringTable = {
     'shared.stop': 'Stop',
   },
   am: {
-    'shared.app.name': 'Equid Sentinel',
-    'shared.app.home': 'Equid Sentinel፣ መነሻ',
+    'shared.app.name': 'Equora',
+    'shared.app.home': 'Equora፣ መነሻ',
 
     'shared.state.normal': 'መደበኛ',
     'shared.state.water': 'ውሃ',

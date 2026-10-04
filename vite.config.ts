@@ -10,10 +10,10 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
-      includeAssets: ['icon.svg', 'icon-192.png'],
+      includeAssets: ['favicon-64.png', 'apple-touch-icon.png', 'logo-96.png'],
       manifest: {
-        name: 'Equid Sentinel',
-        short_name: 'Sentinel',
+        name: 'Equora',
+        short_name: 'Equora',
         description: 'Tells you which working donkey or horse to check first.',
         lang: 'en',
         start_url: '/',
@@ -21,7 +21,6 @@ export default defineConfig({
         background_color: '#F5F0E6',
         theme_color: '#F5F0E6',
         icons: [
-          { src: 'icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
           { src: 'icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },

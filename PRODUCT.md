@@ -1,6 +1,6 @@
 # Product
 
-Equid Sentinel is an offline neck tag for working donkeys and horses, and the app that goes with it. The tag learns one animal's normal behaviour and tells the owner when to check it. It never diagnoses.
+Equora is an offline neck tag for working donkeys and horses, and the app that goes with it. The tag learns one animal's normal behaviour and tells the owner when to check it. It never diagnoses.
 
 ## Who uses it
 

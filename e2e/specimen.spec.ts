@@ -6,7 +6,7 @@ import { expect, test } from '@playwright/test'
 test.describe('specimen sheet', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/specimen')
-    await expect(page.getByRole('heading', { name: 'Equid Sentinel' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Equora' })).toBeVisible()
     await page.evaluate(() => document.fonts.ready)
   })
 
