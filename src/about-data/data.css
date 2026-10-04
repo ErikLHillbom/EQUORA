@@ -416,3 +416,219 @@
   background: linear-gradient(180deg, rgba(241, 233, 212, 0.9), rgba(229, 217, 188, 0.86));
   box-shadow: 0 1px 2px rgba(31, 28, 23, 0.16);
 }
+
+/* ---------- Columns: one column on a phone ---------- */
+
+.ds-cols,
+.ds-col {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.ds-cols + .ds-trio {
+  margin-top: var(--space-3);
+}
+
+.ds-rules .ds-states {
+  margin-top: var(--space-4);
+}
+
+.ds-rules__text > * + * {
+  margin-top: var(--space-3);
+}
+
+/* ---------- Tablets and computers: a datasheet that uses the width ---------- */
+
+@media (min-width: 768px) {
+  .ds-list--cols {
+    columns: 2;
+    column-gap: var(--space-7);
+  }
+
+  .ds-list--cols li {
+    break-inside: avoid;
+  }
+
+  .ds-list--cols li + li {
+    margin-top: 0;
+  }
+
+  .ds-list--cols li {
+    margin-bottom: var(--space-2);
+  }
+
+  /* Sources in two columns, each reference kept whole. */
+  .ds-sources {
+    columns: 2;
+    column-gap: var(--space-7);
+  }
+
+  .ds-sources .ds-h3 {
+    break-after: avoid;
+  }
+
+  .ds-refs li {
+    break-inside: avoid;
+  }
+
+  .ds-sources > .ds-note {
+    column-span: all;
+    margin-top: var(--space-5);
+  }
+
+  /* The ten gaps in two columns on the kraft slip, read down then across. */
+  .ds-gaps__list {
+    columns: 2;
+    column-gap: var(--space-7);
+  }
+
+  .ds-gap {
+    break-inside: avoid;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* More air between the sections of the sheet than inside them. */
+  .ds.ui-paper > * + * {
+    margin-top: var(--space-7);
+  }
+
+  .ds .ui-numhead {
+    font-size: 1.625rem;
+  }
+
+  .ds section > .ui-numhead + * {
+    margin-top: var(--space-4);
+  }
+
+  /* Sentences stay at a reading width, however wide the sheet. */
+  .ds-intro,
+  .ds-lead,
+  .ds-sheet > p,
+  .ds-rules__text > p,
+  .ds-trio__part > p {
+    max-width: 72ch;
+  }
+
+  .ds-intro {
+    font-size: var(--size-lead);
+    line-height: 1.5 !important;
+  }
+
+  .ds-sheet.ui-slip--padded,
+  .ds-sources.ui-slip--padded,
+  section > .ui-slip--padded {
+    padding: var(--space-5) var(--space-6);
+  }
+
+  .ds .ui-ledger {
+    font-size: var(--size-small);
+  }
+
+  /* 1. The model: numbers and the per-activity table left, baseline and confusion right. */
+  .ds-cols {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: var(--space-5);
+  }
+
+  .ds-col {
+    gap: var(--space-5);
+  }
+
+  .ds-cols + .ds-trio {
+    margin-top: var(--space-5);
+  }
+
+  .ds .ds-perclass th,
+  .ds .ds-perclass td,
+  .ds .ds-confusion th,
+  .ds .ds-confusion td {
+    padding: 9px 8px;
+  }
+
+  .ds-results__shipped td {
+    font-size: 1.75rem;
+  }
+
+  /* Threshold, rolling and the limits of the test: three columns split by hairlines. */
+  .ds-trio {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+  }
+
+  .ds-trio > .ds-rule {
+    display: none;
+  }
+
+  .ds-sheet.ds-trio > * + * {
+    margin-top: 0;
+  }
+
+  .ds-trio__part > * + * {
+    margin-top: var(--space-3);
+  }
+
+  .ds-trio__part + .ds-rule + .ds-trio__part {
+    padding-left: var(--space-5);
+    margin-left: var(--space-5);
+    border-left: 1px solid var(--rule);
+  }
+
+  /* 2. Data we built with: two columns of entries. */
+  .ds-entries {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--space-7);
+  }
+
+  .ds-entry,
+  .ds-entry:last-child {
+    padding: var(--space-4) 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  /* 3. Rules: the prose on the left, the five states beside it. */
+  .ds-rules {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    align-items: start;
+    gap: var(--space-7);
+  }
+
+  .ds-rules .ds-states {
+    margin-top: 0;
+  }
+
+  /* 4. The honesty slip: larger, still the most hand-made thing on the page. */
+  .ds-gaps__slip {
+    padding: 44px var(--space-7) var(--space-6) !important;
+    transform: rotate(-0.4deg);
+  }
+
+  .ds-gaps__slip .ui-numhead {
+    font-size: 2rem;
+  }
+
+  .ds-gaps__sub {
+    font-size: var(--size-body);
+  }
+
+  .ds-gaps__list {
+    margin-top: var(--space-5);
+  }
+
+  .ds-gap__what {
+    font-size: var(--size-lead);
+  }
+
+  .ds-gap__close {
+    font-size: 0.9375rem;
+  }
+
+  .ds-gaps__slip .ui-tape {
+    width: 136px;
+    height: 30px;
+  }
+}
