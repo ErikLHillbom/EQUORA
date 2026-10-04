@@ -108,6 +108,8 @@ test.describe('map screen', () => {
 
 test.describe('map screen on a computer', () => {
   test.use({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 })
+  // SwiftShader draws a 1440 px terrain slowly.
+  test.setTimeout(90_000)
 
   test('the map fills the screen and the side panel holds the list and the slip', async ({ page }) => {
     await page.goto('/map')
