@@ -40,27 +40,25 @@ MapLibre GL with PMTiles. Basemap from Protomaps (OpenStreetMap, ODbL), terrain 
 - Mono: IBM Plex Mono (SIL Open Font License 1.1).
 - Sans: the system font stack. Android ships Noto Sans Ethiopic for Amharic.
 - Colours: DESIGN 4 starting values, adjusted where the contrast test fails. Final values live in `src/shared/tokens/tokens.css`.
-- Illustrations: our own ink line drawings, see "Posture drawings" below. Mule uses the donkey set.
+- Illustrations: pencil engravings rendered from our 3D models, see "Drawings rendered from 3D" below. Mule uses the donkey set.
 
 ## Check stamp colour
 
 DESIGN 4 suggested #C98A1B for the CHECK stamp. As a graphic on paper it reached only 2.6:1, under the 3:1 that WCAG 1.4.11 asks for non-text marks. The stamp is now #B67B12. CHECK text stays #8A5A10 (5.2:1 on paper).
 
-## Posture drawing sources
+## Drawings rendered from 3D
 
-The ten posture drawings are now our own line drawings. The mule still uses the donkey set.
+The posture drawings are pencil engravings rendered from our 3D horse and donkey (Quaternius, CC0), one image per species and pose: standing, walking, trotting, grazing, lying. They replace the hand-placed SVG line drawings. Mule uses the donkey. Rolling is never drawn. Files, sizes and the render script are in docs/assets.md.
 
-How they are made: each animal is 10 to 14 pen strokes, written as points in `src/shared/ui/postures.ts` and drawn in code as filled ink ribbons that swell in the middle and taper to round ends. The hand-made wobble comes from seeded jitter on the points, so a drawing is the same on every render. Dark ink sits only on the mane, the tail tip and the hooves. Light hatching sits on the far legs and under the belly. No file in `public/art/` is used.
+How the shader draws them (`src/landing/ink/`):
+- Smooth normals: the models are flat shaded, so every vertex gets the average normal of the faces that share its position. Light and hatching turn around the body instead of breaking on facets.
+- Hatching: graphite (#57524A) strokes drawn on the mesh. Each stroke family is a set of slices through the animal's rest pose, so strokes wrap around the barrel, neck and legs and stay on the body when it moves. The gap between strokes is held at 2.5 to 5 CSS px from a smooth estimate of the slice density, not from per-face derivatives, which showed the facets again. Up to four families at different angles build the tone. Light areas stay paper.
+- Tone: the coat is bare paper; darker parts of the model (mane, tail, hooves, eyes) carry more layers of hatching. No flat fills.
+- Contour: thin ink (#1F1C17) line from depth jumps, 1.1 to 1.8 CSS px, drifting and lifting a little like a pen. The silhouette is darkest, inner overlaps lighter, creases faint.
+- Ground: a soft shadow of level hatching under the hooves.
+- Everything renders at 2x and the browser scales it down.
 
-Sources for each drawing. No image was traced. Muybridge's plates are public domain.
+Lying is built in code (`lyingPose.ts`), calm sternal lying with the head up. The old stills showed it wrong: under React StrictMode the scene's cleanup stopped the animation mixer, which puts every animated bone back to rest while the body stayed lowered, so the animal stood sunk into the ground. The cleanup no longer stops the mixer, and a repeated pose effect sets the pose again.
 
-- Horse, walking: leg positions from Eadweard Muybridge, "Animal Locomotion" (1887), the horse walk plates. Near fore in the air with the knee bent about 35 degrees, far hind pushing off behind, three hooves down.
-- Horse, trotting: leg positions from Muybridge, "The Horse in Motion" (1878), the trotting series (Abe Edgington). Diagonal pair lifted, the other diagonal under the body. No gallop.
-- Horse, standing, grazing and lying: no Muybridge plate. Our own drawing with the same body and leg lengths as the walk and trot.
-- Donkey, all five poses: our own drawing. The leg angles for walking and trotting are the horse angles above. The donkey proportions follow our review notes: ears about 1.6 times the head width with rounded tips, a short upright mane, a straight back, a deeper body, a larger head, a cord tail with an end tuft, thinner legs with small upright hooves, a dorsal stripe and a shoulder cross.
+Stale data: the same drawing, faded to light graphite (grayscale, lower contrast and opacity) inside a dashed graphite frame. The state colour is never applied to a drawing.
 
-The horse is drawn as a small, lean working horse, as kept around Yirgacheffe, and not as a sport horse.
-
-Stale data: the drawing turns into thin broken graphite lines (1.1 units, dashed), with no ink, no hatching and no dark masses. The state colour is never applied to a drawing.
-
-Size, measured as SVG path text: 4.1 to 7.1 KB per drawing, about 61 KB for all ten. The stale outline is 1.3 to 2.3 KB per drawing. A unit test fails if one drawing reaches 8 KB or the set reaches 80 KB.

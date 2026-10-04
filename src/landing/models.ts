@@ -3,10 +3,10 @@
 import type { Pose, Species } from '../shared/types'
 
 export type ModelSpecies = 'horse' | 'donkey'
-/** Poses the 3D scene can draw. Trotting is drawn as walking; there is no trot clip. */
-export type ScenePose = 'standing' | 'walking' | 'grazing' | 'lying'
+/** Poses the 3D scene can draw: every pose the app shows. Rolling is never drawn. */
+export type ScenePose = Pose
 
-export const SCENE_POSES: readonly ScenePose[] = ['standing', 'walking', 'grazing', 'lying']
+export const SCENE_POSES: readonly ScenePose[] = ['standing', 'walking', 'trotting', 'grazing', 'lying']
 
 export interface PoseClip {
   /** Clip name inside the GLB. Lying has no clip: it is built in code from the standing clip. */
@@ -27,6 +27,9 @@ const base = import.meta.env.BASE_URL ?? '/'
 const QUATERNIUS_POSES: Record<ScenePose, PoseClip> = {
   standing: { clip: 'Idle', at: 0 },
   walking: { clip: 'Walk', at: 0.29 },
+  // There is no trot clip (the gallop was removed from the file). The walk at the moment a
+  // diagonal pair of legs swings forward reads as a calm trot.
+  trotting: { clip: 'Walk', at: 0.88 },
   grazing: { clip: 'Eating', at: 2.5 },
   lying: { clip: 'Idle', at: 0 },
 }
@@ -41,12 +44,15 @@ export function modelSpecies(species: Species): ModelSpecies {
   return species === 'horse' ? 'horse' : 'donkey'
 }
 
-/** Rolling is never drawn; the shared types already map it to lying. Trotting draws as walking. */
+/** Rolling is never drawn; the shared types already map it to lying. */
 export function scenePose(pose: Pose): ScenePose {
-  return pose === 'trotting' ? 'walking' : pose
+  return pose
 }
 
-/** Static ink drawing of the same pose, shown while the 3D chunk loads and on low-end phones. */
+/**
+ * Pencil drawing of the same pose, rendered from the 3D scene by scripts/render-drawings.ts.
+ * PostureDrawing shows these, and the 3D scene shows one while it loads and on low-end phones.
+ */
 export function stillUrl(species: Species, pose: Pose): string {
   return `${base}models3d/stills/${modelSpecies(species)}-${scenePose(pose)}.webp`
 }

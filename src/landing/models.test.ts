@@ -1,9 +1,9 @@
 import { canUse3D, modelSpecies, scenePose, stillUrl } from './models'
 
 describe('models manifest', () => {
-  it('draws mules with the donkey and trotting as walking', () => {
+  it('draws mules with the donkey and trotting as its own pose', () => {
     expect(modelSpecies('mule')).toBe('donkey')
-    expect(scenePose('trotting')).toBe('walking')
+    expect(scenePose('trotting')).toBe('trotting')
     expect(stillUrl('mule', 'lying')).toMatch(/models3d\/stills\/donkey-lying\.webp$/)
   })
 })

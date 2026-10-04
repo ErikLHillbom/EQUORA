@@ -7,7 +7,7 @@ Budgets (from the build brief): maps under 15 MB, 3D models and stills under 600
 | Folder | Total |
 |---|---|
 | `public/maps/` | 5,444,221 B (5.2 MB) |
-| `public/models3d/` | 351,588 B (343 KB) |
+| `public/models3d/` | 536,738 B (524 KB) |
 | `public/audio/` | 109,764 B (107 KB) |
 
 ## Offline map
@@ -60,22 +60,26 @@ How the files were made, with glTF-Transform 4.5 (MIT) and meshoptimizer (MIT) r
 
 Result: 4,400 vertices (horse) and 4,044 (donkey), one skinned mesh, 50 joints, 4 clips. The original GLB files are about 1.1 MB each.
 
-### Static stills
+### Drawings (stills)
 
-Rendered by us from the models above with `src/landing/HorseScene.tsx` in headless Chromium (Playwright), 360 by 270 CSS px at 2x, WebP quality 0.75 with transparency. Shown while the 3D code loads and on phones that do not get the 3D scene. Made by us from the CC0 models.
+Pencil engravings rendered by us from the CC0 models above. One set of images serves both `PostureDrawing` (every card and screen) and the 3D scene while it loads or on phones that do not get it. Mule uses the donkey.
+
+Made by `npx tsx scripts/render-drawings.ts`: the script starts Vite with one extra page that shows `src/landing/HorseScene.tsx` in a 720 by 540 box, opens it in headless Chromium (Playwright, SwiftShader WebGL), takes the canvas at 2x (1440 by 1080), scales it down to 720 by 540, snaps each pixel to ink (#1F1C17) or graphite (#57524A) with 16 opacity steps, and saves WebP with a transparent background. Trotting is the walk clip at 0.88 s, where a diagonal pair of legs swings forward: there is no trot clip, and the gallop was removed from the file.
 
 | File | Size |
 |---|---|
-| `public/models3d/stills/horse-standing.webp` | 12,436 |
-| `public/models3d/stills/horse-walking.webp` | 12,594 |
-| `public/models3d/stills/horse-grazing.webp` | 12,544 |
-| `public/models3d/stills/horse-lying.webp` | 10,374 |
-| `public/models3d/stills/donkey-standing.webp` | 10,932 |
-| `public/models3d/stills/donkey-walking.webp` | 10,912 |
-| `public/models3d/stills/donkey-grazing.webp` | 10,216 |
-| `public/models3d/stills/donkey-lying.webp` | 9,028 |
+| `public/models3d/stills/horse-standing.webp` | 28,302 |
+| `public/models3d/stills/horse-walking.webp` | 27,866 |
+| `public/models3d/stills/horse-trotting.webp` | 28,906 |
+| `public/models3d/stills/horse-grazing.webp` | 27,472 |
+| `public/models3d/stills/horse-lying.webp` | 23,758 |
+| `public/models3d/stills/donkey-standing.webp` | 29,546 |
+| `public/models3d/stills/donkey-walking.webp` | 28,182 |
+| `public/models3d/stills/donkey-trotting.webp` | 29,584 |
+| `public/models3d/stills/donkey-grazing.webp` | 26,656 |
+| `public/models3d/stills/donkey-lying.webp` | 23,914 |
 
-The ink look follows Maxime Heckel, "Moebius-style post-processing" (https://blog.maximeheckel.com/posts/moebius-style-post-processing). Our shader is our own code, written after reading the article.
+All ten: 274,186 B. The idea of an ink post-process follows Maxime Heckel, "Moebius-style post-processing" (https://blog.maximeheckel.com/posts/moebius-style-post-processing). Our shaders are our own code, see "Drawings rendered from 3D" in docs/decisions.md.
 
 ## Tag voice (placeholders)
 
