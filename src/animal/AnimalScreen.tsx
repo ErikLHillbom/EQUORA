@@ -11,6 +11,7 @@ import { caseFile, departState } from './model'
 import { NextSteps } from './NextSteps'
 import { TodaySection } from './TodaySection'
 import { TrendsSection } from './TrendsSection'
+import { useStickyTop } from './useStickyTop'
 import './animal.css'
 
 export default function AnimalScreen() {
@@ -21,6 +22,8 @@ export default function AnimalScreen() {
 export function CaseFileView({ id, now }: { id: string; now: number }) {
   const { t } = useT()
   const file = useMemo(() => caseFile(id, now), [id, now])
+  // 88 px clears the top bar on a computer; the column ends 16 px above the window edge.
+  const sideRef = useStickyTop<HTMLDivElement>(88, 16)
 
   if (!file) {
     return (
@@ -45,37 +48,45 @@ export function CaseFileView({ id, now }: { id: string; now: number }) {
   return (
     <Paper className="animal">
       <CaseFolder label={animal.name} note={t('animal.tag', { tag: animal.tagId })} className="animal-folder">
-        <CaseHeader animal={animal} assessment={assessment} now={now} />
-        <NextSteps animal={animal} recommendations={file.recommendations} whatIf={file.whatIf} now={now} />
-        <StitchDivider />
-        <TodaySection
-          animal={animal}
-          readings={file.readings}
-          main={file.main}
-          ink={ink}
-          learning={learning}
-          lyingNowMin={Number.isFinite(lyingNowMin) ? lyingNowMin : undefined}
-          now={now}
-        />
-        <StitchDivider />
-        <TrendsSection
-          animal={animal}
-          budgets={file.budgets}
-          ink={ink}
-          learning={learning ? assessment.learning : undefined}
-          main={file.main}
-          now={now}
-        />
-        <StitchDivider />
-        <ChangesSection animal={animal} changes={file.changes} learning={learning} />
-        <StitchDivider />
-        <Slip as="aside" className="animal-cannot" aria-labelledby="animal-cannot-h">
-          <h2 id="animal-cannot-h" className="animal-h2">
-            {t('animal.cannotSee.title')}
-          </h2>
-          <p>{t('animal.cannotSee.body', { name: animal.name })}</p>
-          <p className="animal-note">{t('animal.cannotSee.change', { name: animal.name })}</p>
-        </Slip>
+        {/* Phones: one column in reading order. Computers: who, state and what to do stay in
+            view on the left while the evidence scrolls on the right. */}
+        <div className="animal-layout">
+          <div className="animal-side" ref={sideRef}>
+            <CaseHeader animal={animal} assessment={assessment} now={now} />
+            <NextSteps animal={animal} recommendations={file.recommendations} whatIf={file.whatIf} now={now} />
+          </div>
+          <div className="animal-main">
+            <StitchDivider className="animal-main__lead" />
+            <TodaySection
+              animal={animal}
+              readings={file.readings}
+              main={file.main}
+              ink={ink}
+              learning={learning}
+              lyingNowMin={Number.isFinite(lyingNowMin) ? lyingNowMin : undefined}
+              now={now}
+            />
+            <StitchDivider />
+            <TrendsSection
+              animal={animal}
+              budgets={file.budgets}
+              ink={ink}
+              learning={learning ? assessment.learning : undefined}
+              main={file.main}
+              now={now}
+            />
+            <StitchDivider />
+            <ChangesSection animal={animal} changes={file.changes} learning={learning} />
+            <StitchDivider />
+            <Slip as="aside" className="animal-cannot" aria-labelledby="animal-cannot-h">
+              <h2 id="animal-cannot-h" className="animal-h2">
+                {t('animal.cannotSee.title')}
+              </h2>
+              <p>{t('animal.cannotSee.body', { name: animal.name })}</p>
+              <p className="animal-note">{t('animal.cannotSee.change', { name: animal.name })}</p>
+            </Slip>
+          </div>
+        </div>
       </CaseFolder>
     </Paper>
   )

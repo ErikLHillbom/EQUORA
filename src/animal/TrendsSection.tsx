@@ -28,7 +28,9 @@ export interface TrendsSectionProps {
 export function TrendsSection({ animal, budgets, ink, learning, main, now }: TrendsSectionProps) {
   const { t } = useT()
   const [range, setRange] = useState<Range>('today')
-  const [group, setGroup] = useState<Group>(main === 'waterDebt' || main === 'workload' || main === 'distance' ? 'work' : 'behaviour')
+  const [group, setGroup] = useState<Group>(
+    main === 'waterDebt' || main === 'workload' || main === 'distance' ? 'work' : 'behaviour',
+  )
 
   const signals = useMemo(() => {
     const list = GROUPS[group].filter((s) => range === 'today' || s !== 'waterDebt')
@@ -49,8 +51,7 @@ export function TrendsSection({ animal, budgets, ink, learning, main, now }: Tre
   )
 
   const unitKey = (s: CardSignal) => `animal.chartUnit.${range === 'today' ? 'today' : 'day'}.${s}`
-  const desc =
-    range === 'today' ? 'animal.chart.descToday' : range === 'd7' ? 'animal.chart.descWeek' : 'animal.chart.desc'
+  const desc = range === 'today' ? 'animal.chart.descToday' : range === 'd7' ? 'animal.chart.descWeek' : 'animal.chart.desc'
 
   return (
     <section className="animal-section" aria-labelledby="animal-trends-h">
@@ -61,34 +62,40 @@ export function TrendsSection({ animal, budgets, ink, learning, main, now }: Tre
         <EmptyNote>{t('animal.trends.learning', { name: animal.name, day: learning.day, of: learning.of })}</EmptyNote>
       ) : (
         <>
-          <Tabs
-            label={t('animal.trends.range')}
-            items={RANGES.map((r) => ({ id: r, label: t(`animal.range.${r}`) }))}
-            value={range}
-            onChange={(id) => setRange(id as Range)}
-            idPrefix="animal-range"
-            controls="animal-trends-panel"
-          />
-          <Tabs
-            className="animal-trends__group"
-            label={t('animal.trends.group')}
-            items={(['behaviour', 'work'] as const).map((g) => ({ id: g, label: t(`animal.trends.${g}`) }))}
-            value={group}
-            onChange={(id) => setGroup(id as Group)}
-            idPrefix="animal-group"
-            controls="animal-trends-panel"
-          />
+          <div className="animal-trends__switch">
+            <Tabs
+              label={t('animal.trends.range')}
+              items={RANGES.map((r) => ({ id: r, label: t(`animal.range.${r}`) }))}
+              value={range}
+              onChange={(id) => setRange(id as Range)}
+              idPrefix="animal-range"
+              controls="animal-trends-panel"
+            />
+            <Tabs
+              className="animal-trends__group"
+              label={t('animal.trends.group')}
+              items={(['behaviour', 'work'] as const).map((g) => ({ id: g, label: t(`animal.trends.${g}`) }))}
+              value={group}
+              onChange={(id) => setGroup(id as Group)}
+              idPrefix="animal-group"
+              controls="animal-trends-panel"
+            />
+          </div>
           <div id="animal-trends-panel" role="tabpanel" aria-labelledby={`animal-range-${range}`} className="animal-trends">
             {trends.map(({ signal, trend }, i) => (
               <TrendChart
                 key={`${range}-${signal}`}
                 trend={trend}
-                title={t('animal.chart.title', { signal: t(`animal.card.${signal}`), range: t(`animal.range.${range}`).toLowerCase() })}
+                title={t('animal.chart.title', {
+                  signal: t(`animal.card.${signal}`),
+                  range: t(`animal.range.${range}`).toLowerCase(),
+                })}
                 desc={t(desc, { name: animal.name })}
                 unit={t(unitKey(signal))}
                 ink={ink}
                 experimental={signal === 'lying'}
                 legend={i === 0}
+                height={i === 0 ? 200 : 170}
                 id={`${animal.id}:${range}:${signal}`}
               />
             ))}
@@ -107,10 +114,12 @@ interface TrendChartProps {
   ink: StateId
   experimental: boolean
   legend: boolean
+  /** Plot height in px. The first chart, the signal behind the state, is a little taller. */
+  height: number
   id: string
 }
 
-function TrendChart({ trend, title, desc, unit, ink, experimental, legend, id }: TrendChartProps) {
+function TrendChart({ trend, title, desc, unit, ink, experimental, legend, height, id }: TrendChartProps) {
   const { t } = useT()
   const hasData = trend.data.some((p) => p.value != null)
   return (
@@ -128,7 +137,7 @@ function TrendChart({ trend, title, desc, unit, ink, experimental, legend, id }:
           title={title}
           desc={desc}
           unit={unit}
-          height={170}
+          height={height}
           legend={legend}
         />
       ) : (
