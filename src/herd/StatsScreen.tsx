@@ -77,7 +77,7 @@ export default function StatsScreen() {
                           <StateStamp state={assessment.state} id={animal.id} />
                         </Link>
                       </th>
-                      <td className="num">
+                      <td className="num stats-col-activity">
                         {!act || !Number.isFinite(act.pct) ? (
                           dash
                         ) : assessment.state !== 'normal' && Math.abs(act.z) > BAND_Z ? (
@@ -101,71 +101,74 @@ export default function StatsScreen() {
             </Ledger>
           </div>
           <p className="herd-note stats-foot">
-            {t('herd.stats.scrollHint')} {t('herd.stats.ledger.note', { hours: RECENT_HOURS })}
+            <span className="stats-scrollhint">{t('herd.stats.scrollHint')} </span>
+            {t('herd.stats.ledger.note', { hours: RECENT_HOURS })}
           </p>
         </Slip>
       </section>
 
       <StitchDivider />
 
-      <section aria-labelledby="stats-insights-h">
-        <NumberedHeading n={2} id="stats-insights-h">
-          {t('herd.stats.insights.heading')}
-        </NumberedHeading>
-        <Slip className="stats-slip">
-          <ul className="stats-insights">
-            {insights.map((line) => {
-              const params = { ...line.params }
-              if (typeof params.groupKey === 'string') params.group = t(params.groupKey)
-              return (
-                <li key={line.id} data-insight={line.id}>
-                  {t(line.textKey, params)}
-                </li>
-              )
-            })}
-          </ul>
-          <p className="herd-note stats-foot">{t('herd.stats.insights.note')}</p>
-        </Slip>
-      </section>
+      <div className="stats-pair">
+        <section aria-labelledby="stats-insights-h">
+          <NumberedHeading n={2} id="stats-insights-h">
+            {t('herd.stats.insights.heading')}
+          </NumberedHeading>
+          <Slip className="stats-slip">
+            <ul className="stats-insights">
+              {insights.map((line) => {
+                const params = { ...line.params }
+                if (typeof params.groupKey === 'string') params.group = t(params.groupKey)
+                return (
+                  <li key={line.id} data-insight={line.id}>
+                    {t(line.textKey, params)}
+                  </li>
+                )
+              })}
+            </ul>
+            <p className="herd-note stats-foot">{t('herd.stats.insights.note')}</p>
+          </Slip>
+        </section>
 
-      <StitchDivider />
+        <StitchDivider className="stats-pair__divider" />
 
-      <section aria-labelledby="stats-top-h">
-        <NumberedHeading n={3} id="stats-top-h">
-          {t('herd.stats.top.heading')}
-        </NumberedHeading>
-        <Slip className="stats-slip">
-          {top.length === 0 ? (
-            <p>{t('herd.stats.top.none', { hours: RECENT_HOURS })}</p>
-          ) : (
-            <Ledger caption={t('herd.stats.top.caption', { hours: RECENT_HOURS })} className="stats-top">
-              <thead>
-                <tr>
-                  <th scope="col">{t('herd.stats.col.animal')}</th>
-                  <th scope="col">{t('herd.stats.col.signal')}</th>
-                  <th scope="col" className="num">
-                    {t('herd.stats.col.change')}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {top.map(({ animalId, deviation }) => (
-                  <tr key={`${animalId}-${deviation.signal}`}>
-                    <th scope="row">
-                      <Link to={`/animal/${animalId}`} className="stats-animal__link stats-animal__link--plain">
-                        {nameOf(animalId)}
-                      </Link>
+        <section aria-labelledby="stats-top-h">
+          <NumberedHeading n={3} id="stats-top-h">
+            {t('herd.stats.top.heading')}
+          </NumberedHeading>
+          <Slip className="stats-slip">
+            {top.length === 0 ? (
+              <p>{t('herd.stats.top.none', { hours: RECENT_HOURS })}</p>
+            ) : (
+              <Ledger caption={t('herd.stats.top.caption', { hours: RECENT_HOURS })} className="stats-top">
+                <thead>
+                  <tr>
+                    <th scope="col">{t('herd.stats.col.animal')}</th>
+                    <th scope="col">{t('herd.stats.col.signal')}</th>
+                    <th scope="col" className="num">
+                      {t('herd.stats.col.change')}
                     </th>
-                    <td>{t(`herd.stats.signal.${deviation.signal}`)}</td>
-                    <td className="num">{changeText(deviation)}</td>
                   </tr>
-                ))}
-              </tbody>
-            </Ledger>
-          )}
-          {top.some((r) => r.deviation.signal === 'lying') && <p className="herd-note stats-foot">{t('herd.stats.top.lyingNote')}</p>}
-        </Slip>
-      </section>
+                </thead>
+                <tbody>
+                  {top.map(({ animalId, deviation }) => (
+                    <tr key={`${animalId}-${deviation.signal}`}>
+                      <th scope="row">
+                        <Link to={`/animal/${animalId}`} className="stats-animal__link stats-animal__link--plain">
+                          {nameOf(animalId)}
+                        </Link>
+                      </th>
+                      <td>{t(`herd.stats.signal.${deviation.signal}`)}</td>
+                      <td className="num">{changeText(deviation)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Ledger>
+            )}
+            {top.some((r) => r.deviation.signal === 'lying') && <p className="herd-note stats-foot">{t('herd.stats.top.lyingNote')}</p>}
+          </Slip>
+        </section>
+      </div>
     </Paper>
   )
 }
