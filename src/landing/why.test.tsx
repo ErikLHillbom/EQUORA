@@ -23,6 +23,6 @@ describe('why it matters', () => {
     expect(screen.getByTestId('why-share')).toHaveTextContent('4.4%')
     expect(screen.getByRole('link', { name: 'See the herd' })).toHaveAttribute('href', '/')
     expect(screen.getByRole('link', { name: 'Try the tag' })).toHaveAttribute('href', '/tag')
-    expect(document.querySelectorAll('svg.ui-posture')).toHaveLength(1)
+    expect(document.querySelectorAll('.ui-posture')).toHaveLength(1)
   })
 })

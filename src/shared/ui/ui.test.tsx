@@ -4,7 +4,6 @@ import { BandChart } from '../charts'
 import { STATES } from '../types'
 import { BottomNav, DotNumber, PostureDrawing, RectStamp, StateStamp, TodayCard } from './index'
 import { pencilLoop } from './geometry'
-import { postureShapes } from './postures'
 
 describe('shared primitives', () => {
   it('every state stamp shows its word as real text', () => {
@@ -55,35 +54,30 @@ describe('shared primitives', () => {
     expect(screen.getByRole('img', { name: 'Today 2.1 is outside the normal 6.0 to 8.0.' })).toBeInTheDocument()
   })
 
-  it('posture drawings exist for both species and all poses, each under 8 KB and all under 80 KB', () => {
-    let total = 0
-    for (const species of ['horse', 'donkey'] as const) {
-      for (const pose of ['standing', 'walking', 'trotting', 'grazing', 'lying'] as const) {
-        const { ink, hatch, outline } = postureShapes(species, pose)
-        const fresh = ink.length + hatch.length
-        expect(fresh).toBeGreaterThan(1000)
-        expect(fresh).toBeLessThan(8000)
-        expect(outline.length).toBeLessThan(8000)
-        total += fresh
-      }
-    }
-    expect(total).toBeLessThan(80000)
-    render(<PostureDrawing species="mule" pose="lying" stale />)
+  it('posture drawings show the rendered still for the species and pose, mule as donkey', () => {
+    const { container } = render(<PostureDrawing species="mule" pose="lying" stale width={160} />)
     expect(screen.getByRole('img', { name: 'Mule, lying, old data' })).toBeInTheDocument()
+    const img = container.querySelector('img')!
+    expect(img.getAttribute('src')).toMatch(/models3d\/stills\/donkey-lying\.webp$/)
+    expect(img).toHaveAttribute('width', '160')
+    expect(img).toHaveAttribute('height', '120')
+    expect(img).toHaveAttribute('loading', 'lazy')
+    expect(img).toHaveAttribute('alt', '')
+    render(<PostureDrawing species="horse" pose="trotting" />)
+    expect(screen.getByRole('img', { name: 'Horse, trotting' }).querySelector('img')!.getAttribute('src')).toMatch(/horse-trotting\.webp$/)
   })
 
-  it('posture drawings are the same on every render and are no longer placeholders', () => {
-    const a = render(<PostureDrawing species="donkey" pose="walking" />).container.innerHTML
-    const b = render(<PostureDrawing species="donkey" pose="walking" />).container.innerHTML
-    expect(a).toBe(b)
-    expect(a).not.toContain('data-placeholder')
+  it('a stale posture drawing differs from a fresh one: faded and framed', () => {
+    const fresh = render(<PostureDrawing species="horse" pose="standing" />).container.firstElementChild!
+    const stale = render(<PostureDrawing species="horse" pose="standing" stale />).container.firstElementChild!
+    expect(fresh).not.toHaveClass('ui-posture--stale')
+    expect(stale).toHaveClass('ui-posture--stale')
   })
 
-  it('a stale posture drawing has only graphite lines: no ink fill, no hatching', () => {
-    const { container } = render(<PostureDrawing species="horse" pose="standing" stale />)
-    expect(container.querySelector('.ui-posture-line')).not.toBeNull()
-    expect(container.querySelector('.ui-posture-ink')).toBeNull()
-    expect(container.querySelector('.ui-posture-hatch')).toBeNull()
+  it('a decorative posture drawing is hidden from screen readers', () => {
+    const { container } = render(<PostureDrawing species="donkey" pose="grazing" decorative />)
+    expect(container.firstElementChild).toHaveAttribute('aria-hidden', 'true')
+    expect(screen.queryByRole('img')).toBeNull()
   })
 
   it('the bottom nav has five links and marks the current page', () => {
