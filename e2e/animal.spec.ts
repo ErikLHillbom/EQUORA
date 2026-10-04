@@ -35,6 +35,46 @@ test.describe('animal case file', () => {
     })
   }
 
+  test.describe('on a computer', () => {
+    test.use({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 })
+
+    for (const c of CASES) {
+      test(`${c.name} lays out in two columns at 1440 px`, async ({ page }) => {
+        await open(page, c.id, c.name)
+        await expect(page.locator('.animal-header .ui-statestamp-word').first()).toHaveText(c.state)
+        // The case header and next steps on the left, the evidence on the right.
+        const side = await page.locator('.animal-side').boundingBox()
+        const main = await page.locator('.animal-main').boundingBox()
+        expect(side).not.toBeNull()
+        expect(main).not.toBeNull()
+        expect(main!.x).toBeGreaterThan(side!.x + side!.width)
+        expect(side!.width).toBeGreaterThanOrEqual(340)
+        expect(side!.width).toBeLessThanOrEqual(440)
+        // Today cards sit three to a row.
+        const cards = page.locator('.animal-today .ui-today')
+        const second = await cards.nth(1).boundingBox()
+        const third = await cards.nth(2).boundingBox()
+        expect(Math.abs(second!.y - third!.y)).toBeLessThan(2)
+        const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
+        expect(overflow).toBeLessThanOrEqual(0)
+        await page.screenshot({ path: `e2e/screenshots/animal-${c.id}-1440.png` })
+        await page.screenshot({ path: `e2e/screenshots/animal-${c.id}-1440-full.png`, fullPage: true })
+        await page.addStyleTag({ content: 'html { filter: grayscale(1); }' })
+        await page.screenshot({ path: `e2e/screenshots/animal-${c.id}-1440-grey.png` })
+      })
+    }
+
+    test('the left column stays in view with its next steps while the page scrolls', async ({ page }) => {
+      await open(page, 'chaltu', 'Chaltu')
+      const changes = page.getByRole('heading', { name: '3 Detected changes', exact: true })
+      await changes.scrollIntoViewIfNeeded()
+      await page.waitForTimeout(300)
+      await expect(changes).toBeInViewport()
+      await expect(page.locator('.animal-next')).toBeInViewport()
+      await page.screenshot({ path: 'e2e/screenshots/animal-chaltu-1440-scrolled.png' })
+    })
+  })
+
   test('what to do next shows the water plans for Chaltu', async ({ page }) => {
     await open(page, 'chaltu', 'Chaltu')
     const next = page.locator('.animal-next')

@@ -125,8 +125,6 @@
 
 .tag-pipe {
   display: grid;
-  gap: 12px;
-  justify-items: center;
 }
 
 .tag-readout {
@@ -255,4 +253,207 @@
 
 .tag-tile__state {
   font-size: 0.8rem;
+}
+
+/* ---------- Layout ---------- */
+
+.tag-side,
+.tag-main {
+  container-type: inline-size;
+  min-width: 0;
+}
+
+.tag-side > * + *,
+.tag-main > * + * {
+  margin-top: var(--space-5);
+}
+
+.tag-h2 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: var(--size-name);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* ---------- What the tag sees now ---------- */
+
+.tag-sees .tag-note {
+  margin: var(--space-1) 0 var(--space-3);
+}
+
+.tag-sees__tiles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.tag-sees__tile {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: var(--space-1);
+  padding: var(--space-5) var(--space-1) var(--space-3);
+  background: var(--paper-raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-card);
+  text-align: center;
+}
+
+/* The current activity: 2 px ink border and the word Now. Ink only, never a state colour. */
+.tag-sees__tile--now {
+  border: 2px solid var(--ink);
+  padding: calc(var(--space-5) - 1px) calc(var(--space-1) - 1px) calc(var(--space-3) - 1px);
+  box-shadow: var(--shadow-card);
+}
+
+.tag-sees__now {
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  padding: 2px 8px 3px;
+  background: var(--ink);
+  color: var(--paper-raised);
+  border-radius: var(--radius-card) 0 var(--radius-card) 0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.tag-sees__art {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+}
+
+.tag-sees__art > * {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Tiles that are not current recede, so the eye finds Now first. Labels keep full contrast. */
+.tag-sees__tile:not(.tag-sees__tile--now) .tag-sees__art > :not(.tag-sees__none) {
+  opacity: 0.45;
+}
+
+.tag-sees__art > .tag-sees__none {
+  width: auto;
+  font-family: var(--font-mono);
+  font-size: var(--size-label);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--graphite);
+}
+
+.tag-sees__label {
+  font-family: var(--font-mono);
+  font-size: var(--size-label);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+@container (min-width: 440px) {
+  .tag-sees__tiles {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Wider main column ---------- */
+
+@container (min-width: 480px) {
+  .tag-scenarios {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tag-scenarios .ui-button {
+    height: 100%;
+    justify-content: flex-start;
+  }
+
+  .tag-tiles {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  /* The readout as a two-column block, like the coordinate block. */
+  .tag-readout {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-6);
+  }
+}
+
+/* ---------- Computer: two columns ---------- */
+
+@media (min-width: 1024px) {
+  .tag-layout {
+    display: grid;
+    grid-template-columns: minmax(400px, 540px) minmax(0, 1fr);
+    column-gap: var(--space-6);
+    align-items: start;
+  }
+
+  .tag-main {
+    padding-left: var(--space-6);
+    border-left: 1px solid var(--rule);
+  }
+
+  .tag-main__lead {
+    display: none;
+  }
+
+  .tag-main > .tag-main__lead + * {
+    margin-top: 0;
+  }
+
+  /* The light on the left, the phrase and the play button beside it, so the tag and what it
+   * sees both fit the first screen. */
+  .tag-device__body {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    justify-items: start;
+    column-gap: var(--space-6);
+    row-gap: var(--space-3);
+    padding: var(--space-5) var(--space-5) var(--space-5) var(--space-4);
+    text-align: left;
+  }
+
+  .tag-device__light {
+    grid-row: 1 / span 2;
+    padding-top: 0;
+  }
+
+  .tag-device__phrase {
+    grid-column: 2;
+    align-self: end;
+    font-size: 1.75rem;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  .tag-device__play {
+    grid-column: 2;
+    align-self: start;
+  }
+
+  .tag-device__body > :nth-child(n + 4) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* The tag stays in view while the right column scrolls, where the window is tall enough for it. */
+@media (min-width: 1024px) and (min-height: 820px) {
+  .tag-side {
+    position: sticky;
+    top: 88px;
+  }
 }

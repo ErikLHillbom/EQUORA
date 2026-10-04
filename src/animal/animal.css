@@ -98,8 +98,15 @@
   transform: rotate(1.2deg);
 }
 
-.animal-header__photo .ui-posture {
+/* The drawing fills its frame; PostureDrawing gets the measured width. */
+.animal-header__art {
+  width: 128px;
+}
+
+.animal-header__art > * {
   display: block;
+  max-width: 100%;
+  height: auto;
 }
 
 .animal-header__pose {
@@ -187,6 +194,19 @@
   font-weight: 400;
   text-transform: none;
   letter-spacing: 0;
+}
+
+/* ---------- Layout ---------- */
+
+.animal-side > * + *,
+.animal-main > * + * {
+  margin-top: var(--space-5);
+}
+
+/* The right column sizes its grids by its own width, so a tablet gets the wide grids too. */
+.animal-main {
+  container: casemain / inline-size;
+  min-width: 0;
 }
 
 /* ---------- Sections ---------- */
@@ -312,4 +332,163 @@
 .animal-cannot p {
   margin: var(--space-2) 0 0;
   line-height: 1.45;
+}
+
+/* ---------- Wider right column (tablet and computer) ---------- */
+
+@container casemain (min-width: 540px) {
+  .animal-today {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+
+  /* The card behind the state reads across: the number on the left, the normal on the right. */
+  .animal-today__main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    column-gap: var(--space-5);
+    row-gap: var(--space-2);
+    align-content: start;
+  }
+
+  .animal-today__main .ui-today-head {
+    grid-column: 1 / -1;
+  }
+
+  .animal-today__main .ui-today-value {
+    grid-column: 1;
+    grid-row: 2 / span 3;
+    align-self: center;
+  }
+
+  .animal-today__main .ui-today-normal {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: end;
+  }
+
+  .animal-today__main .ui-dotbar {
+    grid-column: 2;
+    grid-row: 3;
+  }
+
+  .animal-today__main .ui-today-foot {
+    grid-column: 2;
+    grid-row: 4;
+  }
+}
+
+@container casemain (min-width: 600px) {
+  .animal-trends__switch {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: var(--space-3);
+  }
+
+  .animal-trends__switch .animal-trends__group {
+    margin-top: 0;
+  }
+
+  /* Two charts side by side. With an odd count the first, the signal behind the state, runs wide. */
+  .animal-trends {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6) var(--space-5);
+  }
+
+  .animal-chart:first-child:nth-last-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .animal-log {
+    padding-inline: var(--space-5);
+  }
+}
+
+/* ---------- Computer: two columns ---------- */
+
+@media (min-width: 1024px) {
+  .animal .ui-folder-sheet {
+    padding: var(--space-6) var(--space-6) var(--space-7);
+  }
+
+  .animal-layout {
+    display: grid;
+    grid-template-columns: minmax(340px, 420px) minmax(0, 1fr);
+    column-gap: var(--space-6);
+    align-items: start;
+  }
+
+  /* Stays in view while the evidence scrolls. useStickyTop sets --sticky-top: under the top bar
+   * when the column fits the window, otherwise so that its bottom (what to do next) stays in view. */
+  .animal-side {
+    position: sticky;
+    top: var(--sticky-top, 88px);
+  }
+
+  .animal-main {
+    padding-left: var(--space-6);
+    border-left: 1px solid var(--rule);
+  }
+
+  .animal-main__lead {
+    display: none;
+  }
+
+  .animal-main > .animal-main__lead + * {
+    margin-top: 0;
+  }
+
+  .animal-header {
+    gap: var(--space-5);
+  }
+
+  .animal-header__meta {
+    margin-bottom: calc(-1 * var(--space-6));
+  }
+
+  .animal-header__who {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-5);
+  }
+
+  .animal-header__name {
+    font-size: 2.75rem;
+    letter-spacing: -0.015em;
+    margin-bottom: var(--space-2);
+  }
+
+  .animal-header__drawing {
+    justify-items: stretch;
+    margin: 0;
+  }
+
+  .animal-header__photo {
+    padding: 26px 20px 12px;
+    transform: rotate(-0.8deg);
+  }
+
+  .animal-header__art {
+    width: 100%;
+  }
+
+  .animal-header__pose {
+    grid-auto-flow: column;
+    justify-content: start;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .animal-header__reasons ul {
+    font-size: var(--size-lead);
+    line-height: 1.45;
+  }
+
+  .animal-next .ui-slip {
+    padding: var(--space-5);
+  }
+
+  .animal-today .ui-today {
+    padding: var(--space-4);
+  }
 }

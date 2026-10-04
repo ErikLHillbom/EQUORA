@@ -2,6 +2,7 @@
 // sentences, and what it is doing now as a drawing taped to the page.
 import { Link } from 'react-router'
 import { useT } from '../i18n/LanguageContext'
+import { useWidth } from '../shared/charts/useWidth'
 import { MINUTE } from '../shared/lib/clock'
 import type { Animal, Assessment } from '../shared/types'
 import { MonoLabel, PostureDrawing, RectStamp, Slip, StateStamp, Tape, buttonClass } from '../shared/ui'
@@ -17,6 +18,8 @@ export function CaseHeader({ animal, assessment, now }: CaseHeaderProps) {
   const minutes = Math.floor((now - assessment.lastUpdate) / MINUTE)
   const stale = now - assessment.lastUpdate > 2 * 60 * MINUTE
   const lying = assessment.pose === 'lying'
+  // The drawing fills its frame: small beside the name on a phone, large on a computer.
+  const [artRef, artWidth] = useWidth<HTMLDivElement>(128)
   return (
     <header className="animal-header">
       <div className="animal-header__meta">
@@ -43,7 +46,9 @@ export function CaseHeader({ animal, assessment, now }: CaseHeaderProps) {
         <figure className="animal-header__drawing">
           <Slip className="animal-header__photo" padded={false}>
             <Tape placement="top" angle={-4} />
-            <PostureDrawing species={animal.species} pose={assessment.pose} stale={stale} width={116} />
+            <div className="animal-header__art" ref={artRef}>
+              <PostureDrawing species={animal.species} pose={assessment.pose} stale={stale} width={artWidth} />
+            </div>
           </Slip>
           <figcaption className="animal-header__pose">
             <MonoLabel>{t('animal.pose', { pose: t(`shared.pose.${assessment.pose}`).toLowerCase() })}</MonoLabel>

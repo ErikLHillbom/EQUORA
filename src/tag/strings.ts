@@ -43,6 +43,19 @@ export const strings: StringTable = {
     'tag.from.synthetic': 'Synthetic',
     'tag.from.phone': 'This phone',
 
+    'tag.sees.title': 'What the tag sees now',
+    'tag.sees.lead': 'The tile in ink is what the model read in the last 2 seconds of motion.',
+    'tag.sees.waiting': 'Start the replay or the motion sensor. The tile for what the tag reads is then marked in ink.',
+    'tag.sees.unsure': 'The model is not sure about the last 2 seconds, so no tile is marked.',
+    'tag.sees.now': 'Now',
+    'tag.sees.noDrawing': 'No drawing',
+    'tag.sees.stand': 'Standing',
+    'tag.sees.walk': 'Walking',
+    'tag.sees.trot': 'Trotting',
+    'tag.sees.eat': 'Grazing',
+    'tag.sees.lie': 'Lying',
+    'tag.sees.roll': 'Rolling',
+
     'tag.tape.label': 'Last windows',
     'tag.tape.key':
       'S standing, W walking, T trotting, E eating, L lying, R rolling, ? not sure. Dashed boxes are synthetic windows.',

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useT } from '../i18n/LanguageContext'
 import { createRecordingStore, type RecordingStore } from '../sensing'
 import { formatTime, MINUTE } from '../shared/lib/clock'
-import type { Activity, ImuWindow, Pose, StateId } from '../shared/types'
+import type { Activity, ImuWindow, StateId } from '../shared/types'
 import {
   Button,
   HeaderStrip,
@@ -12,7 +12,6 @@ import {
   MonoLabel,
   NumberedHeading,
   Paper,
-  PostureDrawing,
   RectStamp,
   RoundButton,
   Slip,
@@ -20,20 +19,11 @@ import {
   Tabs,
 } from '../shared/ui'
 import { isMachineVoice, MACHINE_VOICE_KEY, phraseFor } from './phrases'
+import { SeesNow } from './SeesNow'
 import { SCENARIO_ANIMAL, SCENARIO_SIMULATED, SCENARIOS, type ScenarioId } from './scenarios'
 import { REPLAY_RATE, useTagRun, type InputSource, type RecentWindow } from './useTagRun'
 import { playPhrase, stopVoice } from './voice'
 import './tag.css'
-
-const POSE: Record<Activity, Pose> = {
-  stand: 'standing',
-  walk: 'walking',
-  trot: 'trotting',
-  eat: 'grazing',
-  lie: 'lying',
-  roll: 'lying',
-  unknown: 'standing',
-}
 
 const RECORD_LABELS: readonly Activity[] = ['stand', 'walk', 'eat', 'lie', 'roll']
 
@@ -65,7 +55,7 @@ export default function TagScreen() {
   const animalMinutes = counters ? (counters.windowsProcessed * 2) / 60 : 0
 
   return (
-    <Paper>
+    <Paper className="tag">
       <HeaderStrip
         title={t('tag.title')}
         kicker={`${animal.tagId} · ${t(`shared.species.${animal.species}`)} · ${animal.name}`}
@@ -73,105 +63,115 @@ export default function TagScreen() {
         aside={<RectStamp kind="simulated" id="tag-sim" />}
       />
 
-      <section className="tag-device" aria-labelledby="tag-device-h">
-        <h2 id="tag-device-h" className="visually-hidden">
-          {t('tag.device')}
-        </h2>
-        <Slip className="tag-device__body">
-          <div className="tag-device__light">
-            <Lens state={state} size={148} />
-          </div>
-          <p className="tag-device__phrase" lang={lang === 'am' ? 'am' : 'en'}>
-            {phraseText}
-          </p>
-          <div className="tag-device__play">
-            <RoundButton
-              label={t('tag.play')}
-              icon="play"
-              disabled={!phrase.textKey}
-              onClick={() => void playPhrase(state, lang, phraseText)}
-            />
-            <label className="tag-device__voice">
-              <input type="checkbox" checked={voiceOn} onChange={(e) => setVoiceOn(e.target.checked)} />
-              {t('tag.voiceOn')}
-            </label>
-          </div>
-          {phrase.textKey && isMachineVoice(state, lang) && <p className="tag-note">{t(MACHINE_VOICE_KEY)}</p>}
-          {assessment.reasons.length > 0 && (
-            <ul className="tag-reasons">
-              {assessment.reasons.slice(0, 3).map((r, i) => (
-                <li key={i}>{t(r.textKey, r.params)}</li>
-              ))}
-            </ul>
-          )}
-          {assessment.learning && (
-            <RectStamp kind="learning" name={animal.name} day={assessment.learning.day} of={assessment.learning.of} id="tag-learn" />
-          )}
-        </Slip>
-      </section>
+      {/* Phones: the tag, what it sees, the input, the pipeline. Computers: the tag and what it
+          sees stay in view on the left while the input and the pipeline sit on the right. */}
+      <div className="tag-layout">
+        <div className="tag-side">
+          <section className="tag-device" aria-labelledby="tag-device-h">
+            <h2 id="tag-device-h" className="visually-hidden">
+              {t('tag.device')}
+            </h2>
+            <Slip className="tag-device__body">
+              <div className="tag-device__light">
+                <Lens state={state} size={148} />
+              </div>
+              <p className="tag-device__phrase" lang={lang === 'am' ? 'am' : 'en'}>
+                {phraseText}
+              </p>
+              <div className="tag-device__play">
+                <RoundButton
+                  label={t('tag.play')}
+                  icon="play"
+                  disabled={!phrase.textKey}
+                  onClick={() => void playPhrase(state, lang, phraseText)}
+                />
+                <label className="tag-device__voice">
+                  <input type="checkbox" checked={voiceOn} onChange={(e) => setVoiceOn(e.target.checked)} />
+                  {t('tag.voiceOn')}
+                </label>
+              </div>
+              {phrase.textKey && isMachineVoice(state, lang) && <p className="tag-note">{t(MACHINE_VOICE_KEY)}</p>}
+              {assessment.reasons.length > 0 && (
+                <ul className="tag-reasons">
+                  {assessment.reasons.slice(0, 3).map((r, i) => (
+                    <li key={i}>{t(r.textKey, r.params)}</li>
+                  ))}
+                </ul>
+              )}
+              {assessment.learning && (
+                <RectStamp
+                  kind="learning"
+                  name={animal.name}
+                  day={assessment.learning.day}
+                  of={assessment.learning.of}
+                  id="tag-learn"
+                />
+              )}
+            </Slip>
+          </section>
 
-      <StitchDivider />
-
-      <section aria-labelledby="tag-input-h">
-        <NumberedHeading n={1} id="tag-input-h">
-          {t('tag.input')}
-        </NumberedHeading>
-        <Tabs
-          label={t('tag.input')}
-          items={[
-            { id: 'replay', label: t('tag.source.replay') },
-            { id: 'phone', label: t('tag.source.phone') },
-          ]}
-          value={source}
-          onChange={(id) => setSource(id as InputSource)}
-          idPrefix="tag-src"
-          controls="tag-src-panel"
-        />
-        <div id="tag-src-panel" role="tabpanel" aria-labelledby={`tag-src-${source}`} className="tag-panel">
-          {source === 'replay' ? (
-            <ReplayPanel scenario={scenario} onScenario={setScenario} run={run} simulated={simulated} />
-          ) : (
-            <PhonePanel run={run} />
-          )}
+          <SeesNow species={animal.species} activity={last?.activity} />
         </div>
-      </section>
 
-      <StitchDivider />
+        <div className="tag-main">
+          <StitchDivider className="tag-main__lead" />
 
-      <section aria-labelledby="tag-pipe-h">
-        <NumberedHeading n={2} id="tag-pipe-h">
-          {t('tag.pipeline')}
-        </NumberedHeading>
-        <Slip>
-          <div className="tag-pipe">
-            <PostureDrawing
-              species={animal.species}
-              pose={last ? POSE[last.activity] : assessment.pose}
-              stale={!last || last.activity === 'unknown'}
-              width={180}
+          <section aria-labelledby="tag-input-h">
+            <NumberedHeading n={1} id="tag-input-h">
+              {t('tag.input')}
+            </NumberedHeading>
+            <Tabs
+              label={t('tag.input')}
+              items={[
+                { id: 'replay', label: t('tag.source.replay') },
+                { id: 'phone', label: t('tag.source.phone') },
+              ]}
+              value={source}
+              onChange={(id) => setSource(id as InputSource)}
+              idPrefix="tag-src"
+              controls="tag-src-panel"
             />
-            <dl className="tag-readout">
-              <Row k={t('tag.readout.activity')} v={last ? t(`sensing.activity.${last.activity}`) : '-'} />
-              <Row
-                k={t('tag.readout.confidence')}
-                v={last ? `${Math.round(Math.max(...Object.values(last.classification.probs)) * 100)}%` : '-'}
-              />
-              <Row k={t('tag.readout.posture')} v={last ? t(`tag.posture.${last.posture}`) : '-'} experimental />
-              <Row k={t('tag.readout.source')} v={run.lastSource ? t(`tag.from.${run.lastSource}`) : '-'} />
-              <Row k={t('tag.readout.windows')} v={String(counters?.windowsProcessed ?? 0)} />
-              <Row k={t('tag.readout.notSure')} v={String(counters?.notSure ?? 0)} />
-              <Row k={t('tag.readout.lyingBouts')} v={String(counters?.lyingBouts ?? 0)} experimental />
-              <Row k={t('tag.readout.upDowns')} v={String(counters?.upDowns ?? 0)} experimental />
-              <Row k={t('tag.readout.rolling')} v={String(counters?.rollingBouts ?? 0)} experimental />
-              <Row k={t('tag.readout.falls')} v={String(counters?.falls ?? 0)} experimental />
-              <Row k={t('tag.readout.animalTime')} v={`${animalMinutes.toFixed(1)} min`} />
-              <Row k={t('tag.readout.lastUpdate')} v={last ? formatTime(last.at) : '-'} />
-            </dl>
-          </div>
-          <ActivityTape recent={run.recent} />
-          <p className="tag-note">{t('tag.pipeline.note')}</p>
-        </Slip>
-      </section>
+            <div id="tag-src-panel" role="tabpanel" aria-labelledby={`tag-src-${source}`} className="tag-panel">
+              {source === 'replay' ? (
+                <ReplayPanel scenario={scenario} onScenario={setScenario} run={run} simulated={simulated} />
+              ) : (
+                <PhonePanel run={run} />
+              )}
+            </div>
+          </section>
+
+          <StitchDivider />
+
+          <section aria-labelledby="tag-pipe-h">
+            <NumberedHeading n={2} id="tag-pipe-h">
+              {t('tag.pipeline')}
+            </NumberedHeading>
+            <Slip>
+              <div className="tag-pipe">
+                <dl className="tag-readout">
+                  <Row k={t('tag.readout.activity')} v={last ? t(`sensing.activity.${last.activity}`) : '-'} />
+                  <Row
+                    k={t('tag.readout.confidence')}
+                    v={last ? `${Math.round(Math.max(...Object.values(last.classification.probs)) * 100)}%` : '-'}
+                  />
+                  <Row k={t('tag.readout.posture')} v={last ? t(`tag.posture.${last.posture}`) : '-'} experimental />
+                  <Row k={t('tag.readout.source')} v={run.lastSource ? t(`tag.from.${run.lastSource}`) : '-'} />
+                  <Row k={t('tag.readout.windows')} v={String(counters?.windowsProcessed ?? 0)} />
+                  <Row k={t('tag.readout.notSure')} v={String(counters?.notSure ?? 0)} />
+                  <Row k={t('tag.readout.lyingBouts')} v={String(counters?.lyingBouts ?? 0)} experimental />
+                  <Row k={t('tag.readout.upDowns')} v={String(counters?.upDowns ?? 0)} experimental />
+                  <Row k={t('tag.readout.rolling')} v={String(counters?.rollingBouts ?? 0)} experimental />
+                  <Row k={t('tag.readout.falls')} v={String(counters?.falls ?? 0)} experimental />
+                  <Row k={t('tag.readout.animalTime')} v={`${animalMinutes.toFixed(1)} min`} />
+                  <Row k={t('tag.readout.lastUpdate')} v={last ? formatTime(last.at) : '-'} />
+                </dl>
+              </div>
+              <ActivityTape recent={run.recent} />
+              <p className="tag-note">{t('tag.pipeline.note')}</p>
+            </Slip>
+          </section>
+        </div>
+      </div>
     </Paper>
   )
 }
@@ -303,7 +303,7 @@ function PhonePanel({ run }: { run: Run }) {
     setLabel(null)
     if (!l || windows.length === 0 || !store.current) return
     await store.current.save({ label: l, windows, animalId: run.animal.id })
-    setSaved(Math.round((windows.length * 2 * 1000) / MINUTE * 10) / 10)
+    setSaved(Math.round(((windows.length * 2 * 1000) / MINUTE) * 10) / 10)
     setPending((await store.current.pending()).length)
   }
 
