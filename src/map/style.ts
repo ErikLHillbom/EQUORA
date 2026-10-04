@@ -271,7 +271,7 @@ export function buildMapStyle(options: MapStyleOptions = {}): StyleSpecification
   }
   return {
     version: 8,
-    name: 'Equid Sentinel paper',
+    name: 'Equora paper',
     center: DEMO_CENTER,
     zoom: 13,
     glyphs: `${baseUrl}maps/fonts/{fontstack}/{range}.pbf`,
