@@ -415,14 +415,38 @@
     margin-top: 0;
   }
 
+  /* The light on the left, the phrase and the play button beside it, so the tag and what it
+   * sees both fit the first screen. */
   .tag-device__body {
-    padding: var(--space-6) var(--space-5) var(--space-5);
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    justify-items: start;
+    column-gap: var(--space-6);
+    row-gap: var(--space-3);
+    padding: var(--space-5) var(--space-5) var(--space-5) var(--space-4);
+    text-align: left;
+  }
+
+  .tag-device__light {
+    grid-row: 1 / span 2;
+    padding-top: 0;
   }
 
   .tag-device__phrase {
-    font-size: 2rem;
+    grid-column: 2;
+    align-self: end;
+    font-size: 1.75rem;
     line-height: 1.2;
     text-wrap: balance;
+  }
+
+  .tag-device__play {
+    grid-column: 2;
+    align-self: start;
+  }
+
+  .tag-device__body > :nth-child(n + 4) {
+    grid-column: 1 / -1;
   }
 }
 

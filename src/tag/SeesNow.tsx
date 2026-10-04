@@ -13,7 +13,7 @@ const POSE: Record<Exclude<Tile, 'roll'>, Pose> = { stand: 'standing', walk: 'wa
 const EXPERIMENTAL: ReadonlySet<Tile> = new Set(['lie', 'roll'])
 
 /** The tile an activity lights up. Not sure lights up none. */
-export function tileFor(activity: Activity | undefined): Tile | null {
+function tileFor(activity: Activity | undefined): Tile | null {
   if (!activity || activity === 'unknown') return null
   return activity === 'trot' ? 'walk' : activity
 }
