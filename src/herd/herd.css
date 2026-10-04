@@ -1,19 +1,15 @@
-/* Herd home and Statistics layout. Colours come only from tokens; state colour lives in stamps. */
-
-.herd-label {
-  display: block;
-  margin-bottom: var(--space-2);
-  /* Flat paper knockout so the label never sits on grain. */
-  width: fit-content;
-  padding: 2px 6px 2px 0;
-  background: var(--paper);
-}
+/* Herd home and Statistics layout. Colours come only from tokens; state colour lives in stamps
+   and in the 4 px edge of a card that needs a look. Breakpoints (docs/design-desktop.md):
+   720 px two card columns, 1024 px computer layout, 1200 px three card columns. */
 
 .herd-h2 {
   font-family: var(--font-serif);
   font-size: var(--size-name);
+  font-weight: 600;
+  line-height: 1.15;
   width: fit-content;
   padding-right: 8px;
+  /* Flat paper knockout so the heading never sits on grain. */
   background: var(--paper);
 }
 
@@ -27,19 +23,100 @@
   display: block;
   font-family: var(--font-mono);
   font-size: var(--size-label);
-  letter-spacing: 0.04em;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--graphite);
-  line-height: 1.4;
+  line-height: 1.45;
+}
+
+.herd-ids--quiet {
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 1024px) {
+  .herd > * + * {
+    margin-top: var(--space-6);
+  }
+}
+
+/* ---------- Header strip: title, coordinates and the honesty stamp in one band on computers ---------- */
+
+@media (min-width: 1024px) {
+  .herd-header .ui-header-sheet {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 30rem) auto;
+    align-items: center;
+    column-gap: var(--space-7);
+    padding-block: var(--space-5) calc(var(--space-5) + 8px);
+  }
+
+  .herd-header .ui-header-top {
+    display: contents;
+  }
+
+  .herd-header .ui-header-titles {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .herd-header .ui-header-body {
+    grid-column: 2;
+    grid-row: 1;
+    margin-top: 0;
+  }
+
+  .herd-header .ui-header-aside {
+    grid-column: 3;
+    grid-row: 1;
+    align-self: start;
+  }
 }
 
 /* ---------- Visit first ---------- */
+
+.herd-first {
+  /* Room for the ink tab that sits on the sheet's top edge. */
+  padding-top: 26px;
+}
+
+.herd-first__sheet {
+  display: grid;
+}
+
+.herd-first__tab {
+  position: absolute;
+  bottom: 100%;
+  left: var(--space-4);
+  max-width: calc(100% - 2 * var(--space-4));
+  padding: 6px 12px 5px;
+  border-radius: 4px 4px 0 0;
+  background: var(--ink);
+  color: var(--paper-raised);
+  font-family: var(--font-mono);
+  font-size: var(--size-label);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+
+/* A calm herd: the tab is outlined, not inked. */
+.herd-first--calm .herd-first__tab {
+  background: var(--paper-raised);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  border-bottom: 0;
+}
 
 /* A window onto the drawing: the still and the 3D scene have wide margins, so the frame is a
    little larger than the window and centred on the animal. */
 .herd-figure {
   position: relative;
-  height: 210px;
+  height: 220px;
   overflow: hidden;
+  border-bottom: 1px solid var(--rule);
 }
 
 .herd-figure__frame {
@@ -49,7 +126,7 @@
   width: min(120%, 420px);
   aspect-ratio: 4 / 3;
   transform: translate(-50%, -54%);
-  /* The still is printed on paper: multiply lets it sit on the page without a box. The frame
+  /* The still is printed on paper: multiply lets it sit on the sheet without a box. The frame
      blends as a whole, because its transform isolates anything inside it. */
   mix-blend-mode: multiply;
 }
@@ -62,6 +139,7 @@
 
 .herd-figure img,
 .herd-figure__still {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -72,9 +150,12 @@
   height: 100%;
 }
 
-.herd-first__slip {
+.herd-first__text {
   display: grid;
-  gap: var(--space-3);
+  align-content: start;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-4);
+  min-width: 0;
 }
 
 .herd-first__head {
@@ -90,50 +171,153 @@
 
 .herd-first__who {
   min-width: 0;
-  padding-top: 4px;
+  padding-top: 2px;
 }
 
 .herd-first__name {
   font-family: var(--font-serif);
-  font-size: var(--size-title);
-  line-height: 1.1;
-  margin-bottom: 4px;
+  font-size: clamp(2rem, 1.4rem + 1.6vw, 3.25rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+  margin-bottom: var(--space-2);
 }
 
 .herd-first__reason {
+  max-width: 38ch;
   font-size: var(--size-lead);
   line-height: 1.4;
+  text-wrap: pretty;
+}
+
+.herd-first__more {
+  display: grid;
+  gap: var(--space-1);
+  margin: calc(-1 * var(--space-2)) 0 0;
+  padding: 0 0 0 1.1em;
+  max-width: 60ch;
+  color: var(--graphite);
+  line-height: 1.45;
+}
+
+.herd-first__more li::marker {
+  color: var(--graphite);
 }
 
 .herd-first__rec {
-  font-size: var(--size-body);
+  display: grid;
+  gap: var(--space-1);
+  max-width: 60ch;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--rule);
   line-height: 1.45;
-  padding-left: var(--space-3);
-  border-left: 2px solid var(--ink);
 }
 
-/* ---------- The herd now: five stamps with a count each ---------- */
+.herd-first .ui-rectstamp {
+  justify-self: start;
+}
+
+.herd-first__go {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .herd-first__tab {
+    left: var(--space-6);
+  }
+
+  .herd-first__sheet {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .herd-figure {
+    height: auto;
+    min-height: 440px;
+    border-bottom: 0;
+    border-right: 1px solid var(--rule);
+  }
+
+  .herd-figure__frame {
+    width: min(112%, 700px);
+    transform: translate(-50%, -52%);
+  }
+
+  .herd-first__text {
+    align-content: center;
+    gap: var(--space-5);
+    padding: var(--space-7) var(--space-7) var(--space-7) var(--space-7);
+  }
+
+  .herd-first__head {
+    gap: var(--space-5);
+  }
+
+  .herd-first__reason {
+    font-size: 1.375rem;
+    line-height: 1.35;
+  }
+
+  .herd-first__more {
+    margin-top: calc(-1 * var(--space-3));
+  }
+
+  .herd-first__go {
+    justify-self: start;
+    width: auto;
+    min-width: 240px;
+    padding-inline: var(--space-6);
+  }
+}
+
+/* ---------- Animal list: heading, the five counts, the cards ---------- */
+
+.herd-list__head {
+  display: grid;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.herd-list__title .herd-note {
+  width: fit-content;
+  margin-top: 2px;
+  padding-right: 6px;
+  background: var(--paper);
+}
+
+/* The herd now: one quiet strip. Each count filters the cards. */
+.herd-counts {
+  background: var(--paper-raised);
+  border: var(--border-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+.herd-counts__label {
+  display: block;
+  padding: var(--space-2) var(--space-3) 0;
+}
 
 .herd-counts__list {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 4px;
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.herd-counts__list > li + li {
+  border-left: 1px solid var(--rule);
 }
 
 .herd-count {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
   gap: 4px;
-  min-height: 88px;
-  padding: 10px 2px 8px;
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-card);
-  background: var(--paper-raised);
+  min-height: 84px;
+  height: 100%;
+  padding: 10px 2px 10px;
   color: var(--ink);
   text-decoration: none;
   text-align: center;
@@ -142,18 +326,23 @@
 
 a.herd-count:focus-visible {
   outline: var(--focus);
-  outline-offset: var(--focus-offset);
+  outline-offset: -3px;
 }
 
 a.herd-count[aria-current='true'] {
-  border-color: var(--ink);
-  box-shadow: inset 0 0 0 1px var(--ink);
+  background: var(--paper);
+  box-shadow: inset 0 -3px 0 var(--ink);
+}
+
+@media (hover: hover) {
+  a.herd-count:hover .herd-count__word {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
 }
 
 .herd-count--zero {
   color: var(--graphite);
-  background: transparent;
-  border-style: dashed;
 }
 
 .herd-count__n {
@@ -173,15 +362,51 @@ a.herd-count[aria-current='true'] {
   line-height: 1.15;
 }
 
-/* ---------- Animal list ---------- */
+@media (min-width: 720px) {
+  .herd-count {
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: 56px;
+    padding: 6px var(--space-3);
+  }
 
-.herd-list__head {
-  margin-bottom: var(--space-4);
+  .herd-count__word {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
 }
 
-.herd-list__head .herd-note {
-  width: fit-content;
-  background: var(--paper);
+@media (min-width: 1024px) {
+  .herd-list__head {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: var(--space-6);
+  }
+
+  .herd-h2 {
+    font-size: var(--size-title);
+  }
+
+  .herd-counts {
+    display: flex;
+    align-items: stretch;
+  }
+
+  .herd-counts__label {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--space-4);
+    border-right: 1px solid var(--rule);
+  }
+
+  .herd-counts__list {
+    display: flex;
+  }
+
+  .herd-count {
+    padding-inline: var(--space-4);
+  }
 }
 
 .herd-filter {
@@ -197,89 +422,293 @@ a.herd-count[aria-current='true'] {
   border-radius: var(--radius-card);
 }
 
+/* ---------- Card grid ---------- */
+
 .herd-cards {
   display: grid;
-  gap: var(--space-4);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.herd-card {
-  display: grid;
-  grid-template-columns: 96px minmax(0, 1fr);
-  align-items: start;
-  gap: var(--space-3);
-  min-height: 48px;
-  padding: var(--space-4) var(--space-4) var(--space-4) var(--space-3);
-  border-radius: var(--radius-card);
+/* Room for the "Visit first" tab above the first card. */
+.herd-cards--tabbed {
+  padding-top: 24px;
+}
+
+.herd-cards > li {
+  display: flex;
+  min-width: 0;
+}
+
+@media (min-width: 720px) {
+  .herd-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .herd-cards {
+    gap: var(--space-6);
+  }
+}
+
+@media (min-width: 1200px) {
+  .herd-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ---------- The animal card (team mockup) ---------- */
+
+.acard {
+  --card-pad: var(--space-5);
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--card-pad) var(--card-pad) 0;
   color: var(--ink);
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
 }
 
-.herd-card:focus-visible {
-  outline: var(--focus);
-  outline-offset: var(--focus-offset);
+/* The state edge. The padding gives back what the wider border takes, so text lines up. */
+.acard--edge {
+  border-left: 4px solid var(--card-edge);
+  padding-left: calc(var(--card-pad) - 3px);
 }
 
-.herd-card:active {
+.acard:focus-visible {
+  outline: var(--focus);
+  outline-offset: 3px;
+}
+
+.acard:active {
   background: var(--paper);
 }
 
-.herd-card__drawing {
-  margin-top: 6px;
+@media (hover: hover) {
+  .acard {
+    transition:
+      transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .acard:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 1px 0 rgba(31, 28, 23, 0.05),
+      0 2px 4px rgba(31, 28, 23, 0.08),
+      0 16px 24px -14px rgba(31, 28, 23, 0.3);
+  }
 }
 
-.herd-card__body {
-  display: grid;
-  gap: 4px;
-  min-width: 0;
+@media (hover: hover) and (prefers-reduced-motion: reduce) {
+  .acard {
+    transition: box-shadow 200ms ease-out;
+  }
+
+  .acard:hover {
+    transform: none;
+  }
 }
 
-.herd-card__top {
+.acard__tab {
+  position: absolute;
+  bottom: 100%;
+  right: var(--space-4);
+  padding: 5px 10px 4px;
+  border-radius: 4px 4px 0 0;
+  background: var(--ink);
+  color: var(--paper-raised);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.acard__head {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 4px var(--space-2);
+  gap: var(--space-1) var(--space-3);
 }
 
-.herd-card__name {
+.acard__name {
   font-family: var(--font-serif);
-  font-size: var(--size-name);
-  line-height: 1.15;
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
-.herd-card__reason {
-  font-size: var(--size-small);
+.acard__meta {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: var(--size-label);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--graphite);
   line-height: 1.4;
-  margin: 2px 0;
 }
 
-.herd-card .ui-rectstamp {
-  justify-self: start;
-  margin: 4px 0;
+.acard__body {
+  display: grid;
+  grid-template-columns: min(200px, 46%) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-4);
+  flex: 1;
+  padding: var(--space-4) 0 var(--space-5);
 }
 
-/* Compact rows for large herds: no drawing, reason on one line. */
+.acard__figure {
+  display: block;
+  min-width: 0;
+}
+
+.acard__figure > *,
+.acard__drawing {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.acard__reason {
+  display: block;
+  font-size: var(--size-body);
+  line-height: 1.45;
+  text-wrap: pretty;
+  overflow-wrap: break-word;
+}
+
+@media (min-width: 720px) {
+  .acard__name {
+    font-size: 2rem;
+  }
+
+  .acard__reason {
+    font-size: 1.1rem;
+  }
+
+  .acard__cell {
+    padding-inline: var(--space-3);
+  }
+
+  .acard__foot dd {
+    font-size: 0.9375rem;
+  }
+}
+
+.acard__foot {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid var(--rule);
+}
+
+.acard__cell {
+  min-width: 0;
+  padding: var(--space-3) 10px var(--space-4);
+}
+
+.acard__cell:first-child {
+  padding-left: 0;
+}
+
+.acard__cell:last-child {
+  padding-right: 0;
+}
+
+.acard__cell + .acard__cell {
+  border-left: 1px solid var(--rule);
+}
+
+.acard__foot dt {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--graphite);
+  line-height: 1.3;
+}
+
+.acard__foot dd {
+  margin: 4px 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+}
+
+.acard__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Compact rows for large herds: no drawing, the reason on one line, the footer as one line. */
 .herd-cards--compact {
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-2);
 }
 
-.herd-card--compact {
-  grid-template-columns: minmax(0, 1fr);
-  padding: var(--space-2) var(--space-3);
+.acard--compact {
+  --card-pad: var(--space-3);
+  padding-bottom: var(--space-3);
 }
 
-.herd-card--compact .herd-card__name {
-  font-size: var(--size-lead);
+.acard--compact .acard__name {
+  font-size: var(--size-name);
 }
 
-.herd-card--compact .herd-card__reason {
+.acard--compact .acard__meta {
+  margin-top: 2px;
+}
+
+.acard--compact .acard__reason {
+  margin-top: var(--space-1);
+  font-size: var(--size-small);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.acard--compact .acard__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-4);
+  margin-top: var(--space-1);
+  border-top: 0;
+}
+
+.acard--compact .acard__cell {
+  display: flex;
+  gap: var(--space-1);
+  align-items: baseline;
+  padding: 0;
+  border: 0;
+}
+
+.acard--compact .acard__foot dd {
+  margin: 0;
+  font-size: var(--size-small);
 }
 
 .herd-why {
@@ -308,7 +737,7 @@ a.herd-count[aria-current='true'] {
 }
 
 .stats-ledger {
-  min-width: 520px;
+  min-width: 560px;
 }
 
 .stats-ledger th[scope='col'] {
@@ -329,19 +758,32 @@ a.herd-count[aria-current='true'] {
   white-space: nowrap;
 }
 
+/* Activity against the animal's own normal is the column that matters: set apart on a paper band. */
 .stats-ledger .stats-col-activity {
   min-width: 112px;
+  padding-inline: var(--space-3);
+  background: var(--paper);
+}
+
+.stats-ledger thead .stats-col-activity {
+  color: var(--ink);
+}
+
+.stats-ledger td.stats-col-activity {
+  font-size: 0.9375rem;
+  font-weight: 600;
 }
 
 .stats-animal {
-  min-width: 112px;
+  min-width: 128px;
   padding-right: var(--space-3) !important;
 }
 
 .stats-animal__link {
-  display: grid;
-  align-content: center;
-  gap: 2px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px var(--space-3);
   min-height: 48px;
   color: var(--ink);
   text-decoration: none;
@@ -361,19 +803,7 @@ a.herd-count[aria-current='true'] {
   text-underline-offset: 3px;
 }
 
-.stats-animal__species {
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  color: var(--graphite);
-}
-
-.stats-animal__link .ui-statestamp {
-  margin-top: 2px;
-}
-
 .stats-animal__link--plain {
-  display: flex;
-  align-items: center;
   font-family: var(--font-serif);
   font-size: var(--size-body);
   font-weight: 600;
@@ -384,6 +814,7 @@ a.herd-count[aria-current='true'] {
 
 .stats-foot {
   margin-top: var(--space-3);
+  max-width: 75ch;
 }
 
 .stats-insights {
@@ -419,4 +850,58 @@ a.herd-count[aria-current='true'] {
 
 .stats-insights li + li::before {
   top: calc(var(--space-3) + 0.62em);
+}
+
+.stats-pair > * + * {
+  margin-top: var(--space-5);
+}
+
+/* The table fits from here: no sideways scroll, so no hint. */
+@media (min-width: 720px) {
+  .stats-scrollhint {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .stats > * + * {
+    margin-top: var(--space-6);
+  }
+
+  .stats-slip {
+    padding: var(--space-5) var(--space-6);
+  }
+
+  .stats-ledger {
+    font-size: 0.875rem;
+  }
+
+  .stats-ledger th,
+  .stats-ledger td {
+    padding-block: 10px;
+    padding-inline: var(--space-4);
+  }
+
+  .stats-ledger .stats-col-activity {
+    padding-inline: var(--space-5);
+  }
+
+  .stats-ledger td.stats-col-activity {
+    font-size: 1rem;
+  }
+
+  .stats-pair {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: var(--space-6);
+  }
+
+  .stats-pair > * + * {
+    margin-top: 0;
+  }
+
+  .stats-pair__divider {
+    display: none;
+  }
 }
