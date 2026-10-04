@@ -18,6 +18,20 @@ export const strings: StringTable = {
     'why.value.herd': 'Ethiopia has about {donkeys} million donkeys and {horses} million horses.',
     'why.value.coffee': 'Coffee cherries must reach a pulpery within {hours} hours of picking, so the trip from the slope cannot wait.',
 
+    // The key figure of a sentence, repeated in the margin. Same figure, same source.
+    'why.fig.aboutUsd': 'About USD {n}',
+    'why.fig.upToPct': 'Up to {n}%',
+    'why.fig.million': '{n} million',
+    'why.fig.withinHours': 'Within {n} h',
+    'why.fig.ofN': '{n} of {of}',
+    'why.fig.worth': 'A year to its household, after costs',
+    'why.fig.income': 'Of household income',
+    'why.fig.donkeys': 'Donkeys in Ethiopia',
+    'why.fig.cherry': 'From picking to the pulpery',
+    'why.fig.price': 'A new donkey at market',
+    'why.fig.women': 'Women interviewed',
+    'why.fig.colic': 'Colic cases at the clinic died',
+
     'why.loss.h': 'What losing one means',
     'why.loss.work': 'The carrying stops the same day: water, farm loads and trips to market.',
     'why.loss.income':
