@@ -8,13 +8,27 @@
 .ui-paper {
   display: block;
   width: 100%;
-  max-width: 560px;
+  max-width: var(--page-max);
   margin: 0 auto;
   padding: 0 var(--gutter) var(--space-6);
 }
 
+.ui-paper--reading {
+  max-width: calc(var(--reading-max) + 2 * var(--gutter));
+}
+
+.ui-paper--full {
+  max-width: none;
+}
+
 .ui-paper--nav {
   padding-bottom: calc(56px + 32px + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 1024px) {
+  .ui-paper--nav {
+    padding-bottom: var(--space-7);
+  }
 }
 
 .ui-paper > * + * {
@@ -665,12 +679,15 @@
 }
 
 .ui-header-kicker {
-  margin-bottom: 2px;
+  margin-top: var(--space-1);
+  font-size: var(--size-small);
+  color: var(--graphite);
 }
 
 .ui-header-title {
   font-family: var(--font-serif);
-  font-size: var(--size-title);
+  font-size: clamp(var(--size-title), 1.2rem + 1.6vw, 2.75rem);
+  letter-spacing: -0.015em;
   font-weight: 600;
   line-height: 1.15;
   overflow-wrap: anywhere;
@@ -768,6 +785,65 @@
 .ui-bottomnav-link[aria-current='page'] {
   background: var(--ink);
   color: var(--paper-raised);
+}
+
+/* On a computer the nav lives in the top bar. */
+@media (min-width: 1024px) {
+  .ui-bottomnav {
+    display: none;
+  }
+}
+
+/* ---------- Top nav (desktop) ---------- */
+
+.ui-topnav ul {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ui-topnav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: var(--touch);
+  padding: 0 var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--size-label);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--graphite);
+  border-radius: var(--radius-button);
+}
+
+.ui-topnav-link:hover {
+  color: var(--ink);
+}
+
+/* The current screen is underlined in ink, like a word marked in a notebook. */
+.ui-topnav-link[aria-current='page'] {
+  color: var(--ink);
+}
+
+.ui-topnav-link[aria-current='page']::after {
+  content: '';
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: 10px;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 1px;
+}
+
+.ui-topnav-link:focus-visible {
+  outline: var(--focus);
+  outline-offset: var(--focus-offset);
 }
 
 /* ---------- Lens (the tag light) ---------- */

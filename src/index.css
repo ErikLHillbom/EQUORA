@@ -86,6 +86,12 @@ a {
   outline-offset: var(--focus-offset);
 }
 
+/* Browser surfaces carry the paper too: scrollbars in graphite, caret in ink. */
+html {
+  scrollbar-color: var(--kraft-deep) var(--paper);
+  caret-color: var(--ink);
+}
+
 ::selection {
   background: var(--kraft);
   color: var(--ink);

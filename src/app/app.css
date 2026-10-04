@@ -3,23 +3,69 @@
   min-height: 100dvh;
 }
 
-.app-topbar {
+.app-topbar-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  max-width: 560px;
+  max-width: var(--page-max);
   margin: 0 auto;
   padding: var(--space-2) var(--gutter);
 }
 
 .app-home {
-  display: inline-grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
   min-width: var(--touch);
   min-height: var(--touch);
   margin-left: -7px;
+  padding-right: var(--space-2);
   border-radius: var(--radius-button);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.app-home:focus-visible {
+  outline: var(--focus);
+  outline-offset: var(--focus-offset);
+}
+
+/* The product name shows next to the mark only where there is room for it. */
+.app-name {
+  display: none;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.app-topnav {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .app-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    margin-bottom: var(--space-5);
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .app-topbar-inner {
+    padding-block: var(--space-2);
+  }
+
+  .app-name {
+    display: inline;
+  }
+
+  .app-topnav {
+    display: block;
+    margin-left: auto;
+  }
 }
 
 .app-lang {
@@ -51,7 +97,7 @@
 }
 
 .app-machine-note {
-  max-width: calc(560px - 2 * var(--gutter));
+  max-width: calc(var(--page-max) - 2 * var(--gutter));
   margin: 0 var(--gutter) var(--space-2);
   padding: 6px 10px;
   background: var(--paper-raised);
@@ -61,7 +107,7 @@
   color: var(--graphite);
 }
 
-@media (min-width: 592px) {
+@media (min-width: 1368px) {
   .app-machine-note {
     margin-inline: auto;
   }

@@ -1,4 +1,5 @@
-// App shell: top bar with the mark and the language switch, the screen, and the bottom nav.
+// App shell: top bar with the mark and the language switch, the screen, and the nav.
+// Phones get the pill bar at the bottom; computers get the same links in the top bar.
 import { Suspense, useEffect } from 'react'
 import { Link, Outlet, useLocation } from 'react-router'
 import type { Lang } from '../i18n'
@@ -49,12 +50,16 @@ export function AppShell() {
 
   return (
     <div className="app">
-      <div className="app-topbar">
-        <Link to="/" className="app-home" aria-label={t('shared.app.home')}>
-          <AppMark />
-        </Link>
-        <LanguageSwitch />
-      </div>
+      <header className="app-topbar">
+        <div className="app-topbar-inner">
+          <Link to="/" className="app-home" aria-label={t('shared.app.home')}>
+            <AppMark />
+            <span className="app-name">Equid Sentinel</span>
+          </Link>
+          {nav && <BottomNav placement="top" className="app-topnav" />}
+          <LanguageSwitch />
+        </div>
+      </header>
       {lang === 'am' && <p className="app-machine-note">{t('shared.lang.machine')}</p>}
       <Suspense fallback={<div className="app-loading" />}>
         <Outlet />

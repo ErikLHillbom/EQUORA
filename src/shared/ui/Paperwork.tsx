@@ -7,14 +7,18 @@ export interface PaperProps {
   as?: 'main' | 'div' | 'section'
   /** Leave room for the bottom nav. Default true. */
   nav?: boolean
+  /** wide: working screens up to --page-max (default). reading: prose up to --reading-max. full: edge to edge. */
+  width?: 'wide' | 'reading' | 'full'
   className?: string
 }
 
 /** The page column. The grain is on the body behind it, never under text. */
-export function Paper({ children, as = 'main', nav = true, className }: PaperProps) {
+export function Paper({ children, as = 'main', nav = true, width = 'wide', className }: PaperProps) {
   return createElement(
     as,
-    { className: ['ui-paper', nav ? 'ui-paper--nav' : '', className].filter(Boolean).join(' ') },
+    {
+      className: ['ui-paper', `ui-paper--${width}`, nav ? 'ui-paper--nav' : '', className].filter(Boolean).join(' '),
+    },
     children,
   )
 }

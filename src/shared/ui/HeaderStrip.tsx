@@ -16,7 +16,7 @@ function deckle(seed: string, points = 36): string {
 export interface HeaderStripProps {
   /** Screen title in serif. */
   title: ReactNode
-  /** Small mono caps line above the title. */
+  /** One line of context under the title, e.g. the cooperative. Never above it. */
   kicker?: ReactNode
   /** Slot under the title, usually a CoordinateBlock. */
   children?: ReactNode
@@ -36,8 +36,8 @@ export function HeaderStrip({ title, kicker, children, aside, headingLevel = 'h1
       <div className="ui-header-sheet" style={{ '--deckle': clip } as CSSProperties}>
         <div className="ui-header-top">
           <div className="ui-header-titles">
-            {kicker && <p className="ui-label ui-header-kicker">{kicker}</p>}
             {createElement(headingLevel, { className: 'ui-header-title' }, title)}
+            {kicker && <p className="ui-header-kicker">{kicker}</p>}
           </div>
           {aside && <div className="ui-header-aside">{aside}</div>}
         </div>
