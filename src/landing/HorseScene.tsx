@@ -5,15 +5,13 @@ import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber'
 import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import {
   AnimationMixer,
+  BufferAttribute,
   Box3,
   Color,
   DepthTexture,
-  DirectionalLight,
   Group,
-  HemisphereLight,
   Matrix4,
   Mesh,
-  MeshLambertMaterial,
   MeshNormalMaterial,
   NoBlending,
   OrthographicCamera,
@@ -27,7 +25,6 @@ import {
   Vector3,
   WebGLRenderTarget,
   type AnimationAction,
-  type BufferAttribute,
   type Object3D,
 } from 'three'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
@@ -36,13 +33,19 @@ import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js'
 import type { Pose, Species } from '../shared/types'
 import {
   createInkUniforms,
+  createPencilUniforms,
+  createShadowUniforms,
   INK,
   inkFragmentShader,
   inkVertexShader,
+  pencilFragmentShader,
+  pencilVertexShader,
   rawColor,
   shadowFragmentShader,
   shadowVertexShader,
+  type PencilUniforms,
 } from './ink/inkShader'
+import { smoothNormals } from './ink/smoothNormals'
 import { LYING_POSE } from './ink/lyingPose'
 import { MODELS, modelSpecies, scenePose, stillUrl, type ScenePose } from './models'
 
@@ -58,28 +61,47 @@ export interface HorseSceneProps {
 
 const TRANSITION_S = 0.9
 const BODY_LENGTH = 2
-const CAMERA_POSITION: [number, number, number] = [3.6, 1.5, 3.9]
-const CAMERA_TARGET = new Vector3(-0.1, 0.72, 0.03)
+const CAMERA_POSITION: [number, number, number] = [3.25, 1.45, 3.52]
+const CAMERA_TARGET = new Vector3(-0.1, 0.74, 0.03)
 
 function prefersReducedMotion(): boolean {
   return typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 }
 
-/** Turns the baked material colours into pencil tone: dark mane and hooves, light coat. */
+/**
+ * Turns the baked material colours into pencil tone, 1 being bare paper. The coat (the most
+ * common colour) is 1, so only light and form put hatching on it. Darker parts (mane, tail,
+ * hooves, eyes) get darker in proportion, so they carry more layers of hatching, never a fill.
+ * The pencil shader reads the value as it is.
+ */
 function toneVertexColours(mesh: SkinnedMesh) {
   const geo = mesh.geometry
   if (geo.userData.inkTone) return
   const attr = geo.getAttribute('color') as BufferAttribute | undefined
   if (!attr) return
+  const lum = new Float32Array(attr.count)
+  const counts = new Map<number, number>()
+  const c = new Color()
   for (let i = 0; i < attr.count; i++) {
-    const c = new Color(attr.getX(i), attr.getY(i), attr.getZ(i)).convertLinearToSRGB()
-    const l = 0.299 * c.r + 0.587 * c.g + 0.114 * c.b
-    const tone = Math.min(1, 0.35 + 1.4 * l)
-    // Back to linear so lighting works in the right space.
-    const lin = new Color(tone, tone, tone).convertSRGBToLinear()
-    attr.setXYZ(i, lin.r, lin.g, lin.b)
+    c.setRGB(attr.getX(i), attr.getY(i), attr.getZ(i)).convertLinearToSRGB()
+    const l = Math.round((0.299 * c.r + 0.587 * c.g + 0.114 * c.b) * 100) / 100
+    lum[i] = l
+    counts.set(l, (counts.get(l) ?? 0) + 1)
   }
-  attr.needsUpdate = true
+  let coat = 0
+  let most = 0
+  for (const [l, n] of counts) {
+    if (n > most) {
+      most = n
+      coat = l
+    }
+  }
+  const values = new Float32Array(attr.count * 3)
+  for (let i = 0; i < attr.count; i++) {
+    const tone = Math.min(1, Math.max(0.3, 1 - 2.4 * (coat - lum[i])))
+    values.fill(tone, i * 3, i * 3 + 3)
+  }
+  geo.setAttribute('color', new BufferAttribute(values, 3))
   geo.userData.inkTone = true
 }
 
@@ -96,6 +118,7 @@ interface Foot {
 interface Rig {
   root: Group
   model: Object3D
+  material: ShaderMaterial & { uniforms: PencilUniforms }
   mixer: AnimationMixer
   actions: Map<string, AnimationAction>
   bones: Map<string, Object3D>
@@ -113,11 +136,18 @@ function useRig(url: string): Rig {
   })
   const rig = useMemo<Rig>(() => {
     const model = cloneSkinned(gltf.scene)
-    const material = new MeshLambertMaterial({ vertexColors: true })
+    const material = new ShaderMaterial({
+      uniforms: createPencilUniforms(),
+      vertexShader: pencilVertexShader,
+      fragmentShader: pencilFragmentShader,
+      vertexColors: true,
+      blending: NoBlending,
+    }) as Rig['material']
     const bones = new Map<string, Object3D>()
     model.traverse((o) => {
       if (o instanceof SkinnedMesh) {
         toneVertexColours(o)
+        smoothNormals(o.geometry)
         o.material = material
         o.frustumCulled = false
       }
@@ -153,7 +183,7 @@ function useRig(url: string): Rig {
       feet.push({ leg, foot, fold, offset, restPosition: foot.position.clone(), restQuaternion: foot.quaternion.clone() })
     }
     const standY = model.position.y
-    const partial: Rig = { root: new Group(), model, mixer, actions, bones, rest, feet, standY, lyingDrop: 0 }
+    const partial: Rig = { root: new Group(), model, material, mixer, actions, bones, rest, feet, standY, lyingDrop: 0 }
     // Fold the legs once to measure how far the body must come down to rest on the ground.
     applyLying(partial, 1)
     model.updateMatrixWorld(true)
@@ -166,15 +196,11 @@ function useRig(url: string): Rig {
     partial.root.add(model)
     return partial
   }, [gltf])
-  useEffect(
-    () => () => {
-      rig.mixer.stopAllAction()
-      rig.model.traverse((o) => {
-        if (o instanceof SkinnedMesh) (o.material as MeshLambertMaterial).dispose()
-      })
-    },
-    [rig],
-  )
+  // No mixer.stopAllAction() here. Stopping the last action puts every animated bone back to its
+  // rest state, and under StrictMode this cleanup runs while the same rig stays on screen: the
+  // body stayed lowered but the legs stood straight again, so "lying" came out as an animal sunk
+  // into the ground. The mixer goes away with the rig.
+  useEffect(() => () => rig.material.dispose(), [rig])
   return rig
 }
 
@@ -260,10 +286,11 @@ function InkAnimal({
     const quadScene = new Scene()
     quadScene.add(quad)
     const quadCamera = new OrthographicCamera(-1, 1, 1, -1, 0, 1)
+    const shadowUniforms = createShadowUniforms()
     const shadow = new Mesh(
-      new PlaneGeometry(BODY_LENGTH * 1.25, BODY_LENGTH * 0.55),
+      new PlaneGeometry(BODY_LENGTH * 1.05, BODY_LENGTH * 0.46),
       new ShaderMaterial({
-        uniforms: { uStrength: { value: 0.75 } },
+        uniforms: shadowUniforms,
         vertexShader: shadowVertexShader,
         fragmentShader: shadowFragmentShader,
         blending: NoBlending,
@@ -273,7 +300,7 @@ function InkAnimal({
     shadow.rotation.x = -Math.PI / 2
     shadow.position.y = 0.001
     shadow.renderOrder = -1
-    return { colorRT, normalRT, depthTexture, normalMaterial, uniforms, inkMaterial, quad, quadScene, quadCamera, shadow }
+    return { colorRT, normalRT, depthTexture, normalMaterial, uniforms, shadowUniforms, inkMaterial, quad, quadScene, quadCamera, shadow }
   }, [])
 
   useEffect(
@@ -291,15 +318,12 @@ function InkAnimal({
   )
 
   useLayoutEffect(() => {
+    // No lights: the pencil shader lights the animal itself.
     scene.add(rig.root)
     scene.add(passes.shadow)
-    const hemi = new HemisphereLight(0xffffff, 0x8a8478, 1.7)
-    const key = new DirectionalLight(0xffffff, 3.4)
-    key.position.set(2.5, 4, 3)
-    scene.add(hemi, key)
     camera.lookAt(CAMERA_TARGET)
     return () => {
-      scene.remove(rig.root, passes.shadow, hemi, key)
+      scene.remove(rig.root, passes.shadow)
     }
   }, [scene, rig, passes, camera])
 
@@ -336,7 +360,14 @@ function InkAnimal({
       invalidate()
       return
     }
-    if (prev.pose === pose) return
+    if (prev.pose === pose) {
+      // Same pose again (StrictMode runs effects twice): set it once more so no stale bone state shows.
+      if (!transition.current) {
+        settle(pose)
+        invalidate()
+      }
+      return
+    }
     if (reduced) {
       settle(pose)
       invalidate()
@@ -390,6 +421,9 @@ function InkAnimal({
     const u = passes.uniforms
     u.uResolution.value.set(w, h)
     u.uPx.value = state.viewport.dpr
+    rig.material.uniforms.uPx.value = state.viewport.dpr
+    rig.material.uniforms.uBufferHeight.value = h
+    passes.shadowUniforms.uPx.value = state.viewport.dpr
     u.uNear.value = (camera as { near: number }).near
     u.uFar.value = (camera as { far: number }).far
     u.tColor.value = passes.colorRT.texture
@@ -399,9 +433,10 @@ function InkAnimal({
     const clear = gl.getClearColor(new Color())
     const clearAlpha = gl.getClearAlpha()
 
+    // Pencil pass: stroke coverage in red, nothing (0) around the animal.
     passes.shadow.visible = true
     gl.setRenderTarget(passes.colorRT)
-    gl.setClearColor(0xffffff, 1)
+    gl.setClearColor(0x000000, 0)
     gl.clear()
     gl.render(scene, camera)
 
@@ -454,7 +489,8 @@ export default function HorseScene({ species, pose, stateInk = INK, label, class
       )}
       <Canvas
         frameloop="demand"
-        dpr={[1, 1.5]}
+        // Always 2x, so lines a pixel wide stay crisp once the browser scales the canvas down.
+        dpr={2}
         flat
         gl={{ alpha: true, antialias: false, powerPreference: 'low-power', preserveDrawingBuffer: false }}
         camera={{ fov: 25, near: 0.1, far: 20, position: CAMERA_POSITION }}
