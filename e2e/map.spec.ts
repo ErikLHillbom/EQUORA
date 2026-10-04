@@ -105,3 +105,65 @@ test.describe('map screen', () => {
     await expect(page.locator('.map-mk-btn')).toHaveCount(12)
   })
 })
+
+test.describe('map screen on a computer', () => {
+  test.use({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 })
+
+  test('the map fills the screen and the side panel holds the list and the slip', async ({ page }) => {
+    await page.goto('/map')
+    await waitForMap(page)
+    // No page scroll: the map and the side panel fit under the top bar.
+    const scroll = await page.evaluate(() => ({
+      x: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      y: document.documentElement.scrollHeight - document.documentElement.clientHeight,
+    }))
+    expect(scroll.x).toBeLessThanOrEqual(0)
+    expect(scroll.y).toBeLessThanOrEqual(0)
+    // The map reaches the right edge and the bottom of the window.
+    const stage = await page.locator('.map-stage').boundingBox()
+    expect(stage).not.toBeNull()
+    expect(Math.round(stage!.x + stage!.width)).toBe(1440)
+    expect(Math.round(stage!.y + stage!.height)).toBe(900)
+    // The side panel: 400 px, with every animal and the urgent animal's slip.
+    const side = page.locator('.map-side')
+    expect(Math.round((await side.boundingBox())!.width)).toBe(400)
+    await expect(side.locator('#map-list').getByRole('button')).toHaveCount(12)
+    await expect(page.getByRole('button', { name: 'Animal list' })).toHaveCount(0)
+    const slip = side.locator('.map-panel')
+    await expect(slip.getByRole('heading', { name: 'Kito' })).toBeVisible()
+    await expect(slip.getByRole('link', { name: 'Open case file' })).toBeInViewport()
+    // Every fact on the slip shows without scrolling the slip.
+    const fits = await slip.evaluate((el) => el.scrollHeight <= el.clientHeight + 1)
+    expect(fits).toBe(true)
+    await page.screenshot({ path: 'e2e/screenshots/map-desktop.png' })
+    await page.addStyleTag({ content: 'html { filter: grayscale(1); }' })
+    await page.screenshot({ path: 'e2e/screenshots/map-desktop-grey.png' })
+  })
+
+  test('the list selects an animal and the camera follows', async ({ page }) => {
+    await page.goto('/map')
+    await waitForMap(page)
+    await page.locator('#map-list').getByRole('button', { name: /^Bari/ }).click()
+    await expect(page).toHaveURL(/animal=bari/)
+    await expect(page.locator('.map-dock').getByRole('heading', { name: 'Bari' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Bari, Check' })).toHaveAttribute('aria-pressed', 'true')
+    await waitForMap(page)
+    // Bari's marker is on the map, clear of the side panel.
+    const marker = await page.locator('.map-mk[data-animal="bari"] .map-mk-stamp').boundingBox()
+    const stage = await page.locator('.map-stage').boundingBox()
+    expect(marker!.x).toBeGreaterThan(stage!.x)
+    expect(marker!.x + marker!.width).toBeLessThan(stage!.x + stage!.width)
+    await page.screenshot({ path: 'e2e/screenshots/map-desktop-bari.png' })
+  })
+
+  test('?animal= and the whole herd', async ({ page }) => {
+    await page.goto('/map?animal=chaltu')
+    await waitForMap(page)
+    await expect(page.locator('.map-dock').getByRole('heading', { name: 'Chaltu' })).toBeVisible()
+    await page.getByRole('button', { name: 'Whole herd' }).click()
+    await expect(page.locator('.map-panel')).toHaveCount(0)
+    await waitForMap(page)
+    await expect(page.locator('.map-mk-btn')).toHaveCount(12)
+    await page.screenshot({ path: 'e2e/screenshots/map-desktop-herd.png' })
+  })
+})

@@ -5,15 +5,34 @@
 
 /* ---------- Layout: header, map, room for the nav ---------- */
 
+/* The page is the map: Paper at full width with no padding of its own. */
+.map-page.ui-paper {
+  padding: 0;
+}
+
 .map-screen {
+  /* Room for the bottom nav under the map: 56 px bar, 12 px below it, 12 px above it. */
+  --map-nav: 80px;
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: 560px;
-  height: calc(100vh - var(--map-top, 64px) - var(--map-nav, 80px));
-  height: calc(100dvh - var(--map-top, 64px) - var(--map-nav, 80px));
+  height: calc(100vh - var(--map-top, 64px) - var(--map-nav));
+  height: calc(100dvh - var(--map-top, 64px) - var(--map-nav));
   min-height: 360px;
   margin: 0 auto;
+}
+
+/* On a phone the side panel is not a box: the header sits above the map as before. */
+.map-side {
+  display: contents;
+}
+
+/* Tablets: the same layout, the full width of the screen. */
+@media (min-width: 640px) {
+  .map-screen {
+    max-width: none;
+  }
 }
 
 .map-screen .map-header {
@@ -563,4 +582,167 @@
 .map-mk.is-flipped .map-mk-tab {
   margin: 0 -11px 0 0;
   padding: 3px 10px 2px 7px;
+}
+
+/* ---------- No map, on a computer: the slip beside the list ---------- */
+
+@media (min-width: 1024px) {
+  .map-fallback-cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: var(--space-6);
+  }
+
+  .map-fallback-cols > .map-list:only-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ---------- Computers: the map fills the screen, a paper side panel on the left ---------- */
+
+@media (min-width: 1024px) {
+  /* Sit flush under the sticky top bar, which keeps a margin below it on other screens. */
+  .map-page.ui-paper {
+    margin-top: calc(-1 * var(--space-5));
+  }
+
+  .map-screen {
+    --map-nav: 0px;
+    flex-direction: row;
+    min-height: 520px;
+  }
+
+  .map-screen--wide .map-side {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    width: 400px;
+    min-height: 0;
+    background: var(--paper);
+    border-right: 1px solid var(--rule);
+    box-shadow: 6px 0 18px -14px rgba(31, 28, 23, 0.45);
+  }
+
+  .map-screen--wide .map-header {
+    flex: none;
+    z-index: 3;
+    margin: 0;
+  }
+
+  .map-screen--wide .map-header .ui-header-sheet {
+    padding: var(--space-3) var(--space-5) calc(var(--space-3) + 8px);
+  }
+
+  .map-screen--wide .map-header .ui-header-title {
+    font-size: var(--size-title);
+  }
+
+  .map-screen--wide .map-header .ui-header-body {
+    margin-top: var(--space-1);
+  }
+
+  .map-note--side {
+    margin-top: var(--space-1);
+    font-size: var(--size-small);
+    line-height: 1.4;
+  }
+
+  .map-stage {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .map-tools {
+    top: var(--space-4);
+    right: var(--space-4);
+  }
+
+  /* The list: rows on the side panel's paper, scrolling on their own. */
+  .map-list--side {
+    flex: 1 1 auto;
+    min-height: 168px;
+    margin-top: -6px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(87, 82, 74, 0.45) transparent;
+  }
+
+  .map-list--side .map-list-heading {
+    padding: var(--space-3) var(--space-5) 6px;
+  }
+
+  .map-list--side .map-list-item {
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 56px;
+    padding: 6px var(--space-5);
+  }
+
+  .map-list--side .map-list-item .ui-stamp {
+    margin-top: 0;
+  }
+
+  .map-list--side .map-list-text {
+    flex: 1 1 auto;
+  }
+
+  .map-list--side .map-list-name {
+    font-size: 1.0625rem;
+  }
+
+  /* One line per reason here; the slip below shows it in full. */
+  .map-list--side .map-list-reason {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .map-list--side .map-list-item[aria-pressed='true'] {
+    background: var(--paper-raised);
+    box-shadow: inset 0 0 0 1px rgba(31, 28, 23, 0.55);
+  }
+
+  .map-list--side .map-list-item[aria-pressed='true'] .map-list-reason {
+    color: var(--ink);
+  }
+
+  @media (hover: hover) {
+    .map-list--side .map-list-item:hover {
+      background: var(--paper-raised);
+    }
+  }
+
+  /* The selected animal's slip, resting on the bottom of the side panel. */
+  .map-dock {
+    display: flex;
+    flex: none;
+    max-height: 66%;
+    padding: var(--space-2) var(--space-3) var(--space-3);
+    border-top: 1px solid var(--rule);
+  }
+
+  .map-panel--docked .map-panel-head {
+    padding: 6px 2px 4px 16px;
+  }
+
+  .map-panel--docked .map-panel-body {
+    gap: 10px;
+    padding: 10px 16px var(--space-3);
+  }
+
+  .map-panel--docked .map-panel-foot {
+    padding: 0 16px 14px;
+  }
+
+  .map-panel--docked .map-panel-foot::before {
+    display: none;
+  }
 }

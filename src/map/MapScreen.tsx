@@ -15,7 +15,7 @@ import { boundsOf, mapHerd, type MapAnimal } from './facts'
 import { AnimalList, MapPanel } from './MapPanel'
 import { AnimalMarker, PlaceMarker } from './markers'
 import { ensureMapSources } from './offline'
-import { buildMapStyle, DEMO_BOUNDS, DEMO_CENTER, DEMO_MAX_ZOOM, MAP_INK } from './style'
+import { buildMapStyle, DEMO_BOUNDS, DEMO_CENTER, DEMO_MAX_ZOOM, HILLSHADE_EXAGGERATION, MAP_INK, TERRAIN_EXAGGERATION } from './style'
 import './map.css'
 
 type Status = 'loading' | 'ready' | 'missing'
@@ -29,8 +29,19 @@ const BEARING = -14
 const FOCUS_ZOOM = 14.4
 /** Zoom for the whole herd at 360 px. */
 const OVERVIEW_ZOOM = 12.7
-/** Room for the bottom nav under the map: 56 px bar, 12 px below it, 12 px above it. */
-const NAV_SPACE = 80
+/**
+ * On a computer the map is large, so the camera tilts further and the relief is drawn a little
+ * higher: the valleys and ridges the animals climb read at a glance.
+ */
+const WIDE = {
+  pitch: 62,
+  overviewPitch: 56,
+  focusZoom: 14.2,
+  terrain: 1.8,
+  hillshade: 0.5,
+} as const
+/** Computers: the side panel holds the list and the slip, the nav is in the top bar. */
+const WIDE_QUERY = '(min-width: 1024px)'
 /** Size of a place symbol, px. */
 const PLACE_SYMBOL = 20
 /** Places drawn without a label: the town tap sits 80 m from the market. */
@@ -61,6 +72,24 @@ function webglAvailable(): boolean {
   } catch {
     return false
   }
+}
+
+function matches(query: string): boolean {
+  return typeof window.matchMedia === 'function' && window.matchMedia(query).matches
+}
+
+/** True on a computer screen. Follows the window as it is resized. */
+function useWide(): boolean {
+  const [wide, setWide] = useState(() => matches(WIDE_QUERY))
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return
+    const mq = window.matchMedia(WIDE_QUERY)
+    const on = () => setWide(mq.matches)
+    on()
+    mq.addEventListener?.('change', on)
+    return () => mq.removeEventListener?.('change', on)
+  }, [])
+  return wide
 }
 
 function reducedMotion(): boolean {
@@ -154,7 +183,7 @@ interface Camera {
  * The closest tilted view that shows every point. fitBounds ignores the tilt, so this searches
  * the zoom with the real camera and centres the points in the free area. Leaves the map there.
  */
-function fitPoints(map: MapLibreMap, points: readonly [number, number][]): Camera {
+function fitPoints(map: MapLibreMap, points: readonly [number, number][], pitch: number): Camera {
   const el = map.getContainer()
   const w = el.clientWidth
   const h = el.clientHeight
@@ -169,12 +198,12 @@ function fitPoints(map: MapLibreMap, points: readonly [number, number][]): Camer
     let hi = DEMO_MAX_ZOOM
     for (let i = 0; i < 12; i++) {
       const z = (lo + hi) / 2
-      map.jumpTo({ center, zoom: z, pitch: OVERVIEW_PITCH, bearing: BEARING, padding: NO_PADDING })
+      map.jumpTo({ center, zoom: z, pitch, bearing: BEARING, padding: NO_PADDING })
       if (fits()) lo = z
       else hi = z
     }
     zoom = lo
-    map.jumpTo({ center, zoom, pitch: OVERVIEW_PITCH, bearing: BEARING, padding: NO_PADDING })
+    map.jumpTo({ center, zoom, pitch, bearing: BEARING, padding: NO_PADDING })
     const pts = screen()
     const mx = (Math.min(...pts.map((s) => s.x)) + Math.max(...pts.map((s) => s.x))) / 2
     const my = (Math.min(...pts.map((s) => s.y)) + Math.max(...pts.map((s) => s.y))) / 2
@@ -182,7 +211,7 @@ function fitPoints(map: MapLibreMap, points: readonly [number, number][]): Camer
     const next = map.unproject([now.x + mx - (p.left + w - p.right) / 2, now.y + my - (p.top + h - p.bottom) / 2])
     center = [next.lng, next.lat]
   }
-  map.jumpTo({ center, zoom, pitch: OVERVIEW_PITCH, bearing: BEARING, padding: NO_PADDING })
+  map.jumpTo({ center, zoom, pitch, bearing: BEARING, padding: NO_PADDING })
   return { center, zoom }
 }
 
@@ -227,6 +256,11 @@ export default function MapScreen() {
   const [hosts, setHosts] = useState<Hosts | null>(null)
   const [layout, setLayout] = useState<Layout>(EMPTY_LAYOUT)
   const [top, setTop] = useState(64)
+  const wide = useWide()
+  const wideRef = useRef(wide)
+  useEffect(() => {
+    wideRef.current = wide
+  }, [wide])
 
   const rootRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLDivElement>(null)
@@ -258,7 +292,7 @@ export default function MapScreen() {
     measure()
     window.addEventListener('resize', measure)
     return () => window.removeEventListener('resize', measure)
-  }, [lang, status])
+  }, [lang, status, wide])
 
   // Create the map once per language; remove it (and every marker) on unmount.
   useEffect(() => {
@@ -277,7 +311,7 @@ export default function MapScreen() {
             style: buildMapStyle({ lang }),
             center: startCenter,
             zoom: OVERVIEW_ZOOM,
-            pitch: OVERVIEW_PITCH,
+            pitch: wideRef.current ? WIDE.overviewPitch : OVERVIEW_PITCH,
             bearing: BEARING,
             maxBounds: DEMO_BOUNDS,
             maxZoom: DEMO_MAX_ZOOM,
@@ -315,7 +349,9 @@ export default function MapScreen() {
         m.on('load', () => {
           if (cancelled) return
           addRouteLayers(m, herd)
-          if (herdPoints.length) overviewRef.current = fitPoints(m, herdPoints)
+          if (herdPoints.length) {
+            overviewRef.current = fitPoints(m, herdPoints, wideRef.current ? WIDE.overviewPitch : OVERVIEW_PITCH)
+          }
           setStatus('ready')
         })
         m.on('moveend', () => relayoutRef.current())
@@ -425,24 +461,41 @@ export default function MapScreen() {
     source?.setData(routeFeature(selected))
   }, [status, selected])
 
-  // Move the camera to the selected animal, above the panel. Jump when motion is reduced.
+  // Relief: a little higher on a computer, where the map is large enough to show it.
+  useEffect(() => {
+    const map = mapRef.current
+    if (status !== 'ready' || !map) return
+    try {
+      if (map.getTerrain()) map.setTerrain({ source: 'terrain', exaggeration: wide ? WIDE.terrain : TERRAIN_EXAGGERATION })
+      if (map.getLayer('hillshade')) {
+        map.setPaintProperty('hillshade', 'hillshade-exaggeration', wide ? WIDE.hillshade : HILLSHADE_EXAGGERATION)
+      }
+    } catch {
+      // The style is not ready yet; the defaults from style.ts stay.
+    }
+  }, [status, wide])
+
+  // Move the camera to the selected animal. On a phone it sits above the panel; on a computer
+  // the panel is beside the map. Jump when motion is reduced.
   useEffect(() => {
     const map = mapRef.current
     const at = selected && lngLat(selected)
     if (status !== 'ready' || !map || !at) return
     const mapH = map.getContainer().clientHeight
     const panelH = panelRef.current?.offsetHeight ?? 0
-    const bottom = Math.round(Math.min(panelH + 8, mapH * 0.62))
+    const padding = wide
+      ? { top: 72, bottom: 40, left: 48, right: 48 }
+      : { top: 64, bottom: Math.round(Math.min(panelH + 8, mapH * 0.62)), left: 16, right: 16 }
     const camera = {
       center: at as LngLatLike,
-      zoom: FOCUS_ZOOM,
-      pitch: PITCH,
+      zoom: wide ? WIDE.focusZoom : FOCUS_ZOOM,
+      pitch: wide ? WIDE.pitch : PITCH,
       bearing: map.getBearing(),
-      padding: { top: 64, bottom, left: 16, right: 16 },
+      padding,
     }
     if (reducedMotion()) map.jumpTo(camera)
     else map.flyTo({ ...camera, duration: 2200, essential: false })
-  }, [status, selected])
+  }, [status, selected, wide])
 
   const showAll = useCallback(() => {
     const map = mapRef.current
@@ -450,7 +503,8 @@ export default function MapScreen() {
     setDismissed(true)
     setParams({}, { replace: true })
     if (!map) return
-    const camera = { ...overviewRef.current, pitch: OVERVIEW_PITCH, bearing: BEARING, padding: NO_PADDING }
+    const pitch = wideRef.current ? WIDE.overviewPitch : OVERVIEW_PITCH
+    const camera = { ...overviewRef.current, pitch, bearing: BEARING, padding: NO_PADDING }
     if (reducedMotion()) map.jumpTo(camera)
     else map.flyTo({ ...camera, duration: 1600, essential: false })
   }, [setParams])
@@ -463,6 +517,7 @@ export default function MapScreen() {
       aside={<RectStamp kind="simulated" id="map-sim" />}
     >
       <p className="ui-label map-area">{t('map.area')}</p>
+      {wide && status !== 'missing' && <p className="map-note map-note--side">{t('map.positions')}</p>}
     </HeaderStrip>
   )
 
@@ -471,40 +526,58 @@ export default function MapScreen() {
       <Paper className="map-fallback">
         {header}
         <EmptyNote drawing={<FoldedMap />}>{t('map.offline.missing')}</EmptyNote>
-        {selected && <MapPanel item={selected} onClose={close} inline />}
-        <AnimalList herd={herd} selectedId={selectedId} onSelect={select} />
+        <div className="map-fallback-cols">
+          {selected && <MapPanel item={selected} onClose={close} inline />}
+          <AnimalList herd={herd} selectedId={selectedId} onSelect={select} />
+        </div>
         <p className="map-note">{t('map.positions')}</p>
       </Paper>
     )
   }
 
-  const style = { '--map-top': `${top}px`, '--map-nav': `${NAV_SPACE}px` } as CSSProperties
+  const style = { '--map-top': `${top}px` } as CSSProperties
+  // One tree for both layouts, so the map canvas is never remounted when the window crosses the
+  // computer breakpoint. On a phone .map-side is display: contents.
   return (
-    <main className="map-screen" ref={rootRef} style={style}>
-      {header}
-      <div className="map-stage">
-        <div ref={canvasRef} className="map-canvas" role="region" aria-label={t('map.region')} data-status={status} />
-        {status === 'loading' && <p className="map-loading">{t('map.offline.loading')}</p>}
-        <div className="map-tools">
-          <button type="button" className="map-tool" onClick={showAll}>
-            {t('map.showAll')}
-          </button>
-          <button
-            type="button"
-            className="map-tool"
-            aria-pressed={listOpen}
-            aria-controls="map-list"
-            onClick={() => setListOpen((v) => !v)}
-          >
-            {t('map.list.toggle')}
-          </button>
+    <Paper width="full" nav={false} className="map-page">
+      <div className={['map-screen', wide ? 'map-screen--wide' : ''].filter(Boolean).join(' ')} ref={rootRef} style={style}>
+        <div className="map-side">
+          {header}
+          {wide && <AnimalList id="map-list" className="map-list--side" herd={herd} selectedId={selectedId} onSelect={select} />}
+          {wide && selected && (
+            <div className="map-dock" ref={panelRef}>
+              <MapPanel item={selected} onClose={close} docked />
+            </div>
+          )}
         </div>
-        {listOpen && <AnimalList id="map-list" className="map-list--over" herd={herd} selectedId={selectedId} onSelect={select} />}
-        {selected && !listOpen && (
-          <div className="map-panel-wrap" ref={panelRef}>
-            <MapPanel item={selected} onClose={close} />
+        <div className="map-stage">
+          <div ref={canvasRef} className="map-canvas" role="region" aria-label={t('map.region')} data-status={status} />
+          {status === 'loading' && <p className="map-loading">{t('map.offline.loading')}</p>}
+          <div className="map-tools">
+            <button type="button" className="map-tool" onClick={showAll}>
+              {t('map.showAll')}
+            </button>
+            {!wide && (
+              <button
+                type="button"
+                className="map-tool"
+                aria-pressed={listOpen}
+                aria-controls="map-list"
+                onClick={() => setListOpen((v) => !v)}
+              >
+                {t('map.list.toggle')}
+              </button>
+            )}
           </div>
-        )}
+          {!wide && listOpen && (
+            <AnimalList id="map-list" className="map-list--over" herd={herd} selectedId={selectedId} onSelect={select} />
+          )}
+          {!wide && selected && !listOpen && (
+            <div className="map-panel-wrap" ref={panelRef}>
+              <MapPanel item={selected} onClose={close} />
+            </div>
+          )}
+        </div>
       </div>
       {hosts &&
         herd.map((h) => {
@@ -542,6 +615,6 @@ export default function MapScreen() {
             p.id,
           )
         })}
-    </main>
+    </Paper>
   )
 }
