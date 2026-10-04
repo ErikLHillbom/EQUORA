@@ -45,7 +45,7 @@ export default function HerdScreen() {
   return (
     <Paper className="herd">
       <HeaderStrip
-        title={t('shared.app.name')}
+        title={t('herd.title')}
         kicker={t('herd.kicker', { count: rows.length })}
         id="herd-header"
         className="herd-header"

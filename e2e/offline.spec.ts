@@ -23,7 +23,7 @@ test('every screen works offline after one visit', async ({ page, context }) => 
   await context.setOffline(true)
 
   await page.reload()
-  await expect(page.getByRole('heading', { name: 'Equora' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Aricha cooperative' })).toBeVisible()
   await expect(page.locator('main a[href^="/animal/"]').first()).toBeVisible()
 
   await page.getByRole('navigation').getByRole('link', { name: 'Tag' }).click()

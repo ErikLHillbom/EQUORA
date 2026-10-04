@@ -4,7 +4,8 @@ import type { StringTable } from '../i18n'
 // Amharic falls back to English for now.
 export const strings: StringTable = {
   en: {
-    'herd.kicker': 'Aricha cooperative, {count} animals',
+    'herd.title': 'Aricha cooperative',
+    'herd.kicker': '{count} tagged animals near Yirgacheffe',
     'herd.coords.label': 'Demo area',
     'herd.coords.town': 'Yirgacheffe',
     'herd.coords.zone': 'Gedeo zone',

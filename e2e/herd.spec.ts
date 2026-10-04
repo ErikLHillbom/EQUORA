@@ -35,7 +35,7 @@ async function settle(page: Page) {
 test.describe('herd home', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
-    await expect(page.getByRole('heading', { name: 'Equora', level: 1 })).toBeVisible({ timeout: 30_000 })
+    await expect(page.getByRole('heading', { name: 'Aricha cooperative', level: 1 })).toBeVisible({ timeout: 30_000 })
   })
 
   test('answers who to visit first', async ({ page }) => {
@@ -113,7 +113,7 @@ test.describe('on a computer', () => {
 
   test('herd home: two-column visit first band, three card columns', async ({ page }) => {
     await page.goto('/')
-    await expect(page.getByRole('heading', { name: 'Equora', level: 1 })).toBeVisible({ timeout: 30_000 })
+    await expect(page.getByRole('heading', { name: 'Aricha cooperative', level: 1 })).toBeVisible({ timeout: 30_000 })
     await settle(page)
     expect(await overflow(page)).toBeLessThanOrEqual(0)
     expect(await smallTargets(page)).toEqual([])
