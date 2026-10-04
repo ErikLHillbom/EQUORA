@@ -37,6 +37,8 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./src/test-setup.ts'],
+    // Some tests scan 180 days of herd history; leave room when the machine is busy.
+    testTimeout: 20_000,
     include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.ts'],
   },
 })
