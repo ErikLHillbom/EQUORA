@@ -492,3 +492,17 @@
     padding: var(--space-4);
   }
 }
+
+/* The drawing fills its frame by CSS. Never measure the frame and feed the width back:
+   the image would widen the frame and the two would grow forever. */
+.animal-header__art {
+  overflow: hidden;
+}
+
+.animal-header__art .animal-header__img {
+  display: block;
+  width: 100% !important;
+  max-width: 100%;
+  height: auto !important;
+  aspect-ratio: 4 / 3;
+}
