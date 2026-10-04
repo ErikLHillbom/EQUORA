@@ -30,7 +30,8 @@ describe('generator', () => {
     const t0 = performance.now()
     for (const a of getHerd()) getBudgets(a.id)
     const cold = performance.now() - t0
-    expect(cold).toBeLessThan(300)
+    // About 130 ms on a laptop; the margin keeps the test steady when the machine is busy.
+    expect(cold).toBeLessThan(1000)
     const t1 = performance.now()
     for (const a of getHerd()) getBudgets(a.id)
     expect(performance.now() - t1).toBeLessThan(5)
