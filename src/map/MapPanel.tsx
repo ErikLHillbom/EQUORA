@@ -1,4 +1,5 @@
 // The tap panel (a paper slip above the nav) and the plain list of animals.
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router'
 import { recommendationText } from '../forecast'
 import { useT } from '../i18n/LanguageContext'
@@ -44,9 +45,11 @@ export interface MapPanelProps {
   now?: number
   /** Inline in the page (no map) instead of floating over the map. */
   inline?: boolean
+  /** In the side panel beside the map, on a computer. */
+  docked?: boolean
 }
 
-export function MapPanel({ item, onClose, now = DEMO_NOW, inline }: MapPanelProps) {
+export function MapPanel({ item, onClose, now = DEMO_NOW, inline, docked }: MapPanelProps) {
   const { t, lang } = useT()
   const { animal, assessment, today } = item
   const reason = assessment.reasons[0]
@@ -54,7 +57,7 @@ export function MapPanel({ item, onClose, now = DEMO_NOW, inline }: MapPanelProp
   return (
     <Slip
       as="section"
-      className={['map-panel', inline ? 'map-panel--inline' : ''].filter(Boolean).join(' ')}
+      className={['map-panel', inline ? 'map-panel--inline' : '', docked ? 'map-panel--docked' : ''].filter(Boolean).join(' ')}
       aria-labelledby={headingId}
       data-animal={animal.id}
       padded={false}
@@ -133,12 +136,30 @@ export interface AnimalListProps {
 /** The same animals as a list of buttons, for screen readers and anyone who cannot use the map. */
 export function AnimalList({ herd, selectedId, onSelect, id, className }: AnimalListProps) {
   const { t } = useT()
+  const ref = useRef<HTMLUListElement>(null)
+  // When the list scrolls on its own (beside the map), keep the selected animal in view, e.g.
+  // after a marker is clicked. Never scrolls the page.
+  useEffect(() => {
+    const box = ref.current?.parentElement
+    const el = ref.current?.querySelector<HTMLElement>('[aria-pressed="true"]')
+    if (!box || !el || box.scrollHeight <= box.clientHeight) return
+    const top = el.offsetTop
+    const bottom = top + el.offsetHeight
+    if (top < box.scrollTop) box.scrollTop = top
+    else if (bottom > box.scrollTop + box.clientHeight) box.scrollTop = bottom - box.clientHeight
+  }, [selectedId])
   return (
-    <Slip as="section" id={id} className={['map-list', className].filter(Boolean).join(' ')} aria-labelledby="map-list-h" padded={false}>
+    <Slip
+      as="section"
+      id={id}
+      className={['map-list', className].filter(Boolean).join(' ')}
+      aria-labelledby="map-list-h"
+      padded={false}
+    >
       <h2 id="map-list-h" className="map-list-heading">
         <MonoLabel>{t('map.list.heading')}</MonoLabel>
       </h2>
-      <ul>
+      <ul ref={ref}>
         {herd.map(({ animal, assessment }) => {
           const reason = assessment.reasons[0]
           return (

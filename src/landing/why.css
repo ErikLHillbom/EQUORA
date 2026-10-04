@@ -1,40 +1,48 @@
-/* Why it matters: a field report. Ink on paper, no state colour, one drawing. */
+/*
+ * Why it matters: a field report. Ink on paper, no state colour, one drawing.
+ * Each sentence that carries a figure has it repeated in the margin with its source, so the
+ * page can be scanned. On a phone the figure sits above its sentence.
+ */
 
 :where(.why) p {
   margin: 0;
   line-height: 1.55;
 }
 
+/* ---------- Lede: the intro and the drawing ---------- */
+
+.why-lede {
+  display: grid;
+  gap: var(--space-5);
+}
+
 .why-intro {
-  margin-top: var(--space-3);
   font-size: var(--size-lead);
-  line-height: 1.45 !important;
+  line-height: 1.5 !important;
 }
 
 .why section > .ui-numhead + * {
   margin-top: var(--space-3);
 }
 
-.why-sheet > * + * {
-  margin-top: var(--space-3);
-}
-
 .why-figure {
   margin: 0;
-  padding-top: var(--space-3);
+  padding-top: var(--space-2);
 }
 
 .why-figure__slip {
   display: grid;
   justify-items: center;
   gap: var(--space-2);
-  max-width: 300px;
+  max-width: 340px;
   margin: 0 auto;
   padding-top: 24px !important;
   transform: rotate(0.8deg);
 }
 
-.why-figure__slip .ui-posture {
+.why-figure__drawing {
+  display: block;
+  width: 100%;
   max-width: 100%;
   height: auto;
 }
@@ -42,8 +50,53 @@
 .why-figure__caption {
   font-family: var(--font-mono);
   font-size: var(--size-label);
+  line-height: 1.45;
   color: var(--graphite);
   text-align: center;
+  text-wrap: balance;
+}
+
+/* ---------- Facts: figure and sentence ---------- */
+
+.why-sheet > * + * {
+  margin-top: var(--space-3);
+}
+
+.why-fact + .why-fact {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--rule);
+}
+
+.why-fact__margin {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px var(--space-2);
+  margin-bottom: var(--space-1) !important;
+  line-height: 1.3 !important;
+}
+
+.why-fact__fig {
+  font-family: var(--font-mono);
+  font-size: 1.125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.why-fact__label {
+  font-family: var(--font-mono);
+  font-size: var(--size-label);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--graphite);
+}
+
+/* The source stays with the sentence's citation on a phone. */
+.why-fact__src {
+  display: none;
 }
 
 .why .cite {
@@ -75,6 +128,8 @@
   margin-top: var(--space-2);
 }
 
+/* ---------- The math ---------- */
+
 .why .ui-ledger tbody th {
   font-family: var(--font-sans);
   font-weight: 400;
@@ -85,6 +140,10 @@
 .why .ui-ledger td {
   white-space: nowrap;
   vertical-align: top;
+}
+
+.why-math__result > * + * {
+  margin-top: var(--space-3);
 }
 
 .why-math__share {
@@ -99,4 +158,166 @@
 .why-cta {
   display: grid;
   gap: var(--space-2);
+}
+
+/* ---------- Tablets: the drawing beside the intro ---------- */
+
+@media (min-width: 720px) {
+  .why-lede {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  .why-figure__slip {
+    max-width: none;
+  }
+}
+
+/* ---------- Computers: reading width, figures in the margin ---------- */
+
+@media (min-width: 1024px) {
+  /* A reading column plus a margin for the figures. */
+  .why.ui-paper {
+    max-width: calc(1040px + 2 * var(--gutter));
+  }
+
+  .why.ui-paper > * + * {
+    margin-top: var(--space-7);
+  }
+
+  .why .ui-numhead {
+    font-size: 1.75rem;
+  }
+
+  .why section > .ui-numhead + * {
+    margin-top: var(--space-4);
+  }
+
+  .why-lede {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: var(--space-7);
+    padding-top: var(--space-2);
+  }
+
+  .why-intro {
+    max-width: 30ch;
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    line-height: 1.35 !important;
+    letter-spacing: -0.005em;
+    text-wrap: pretty;
+  }
+
+  .why-figure__slip {
+    padding: 36px var(--space-6) var(--space-4) !important;
+    transform: rotate(0.6deg);
+  }
+
+  .why-figure__caption {
+    font-size: var(--size-small);
+  }
+
+  .why-sheet.ui-slip--padded,
+  .why-cta.ui-slip--padded {
+    padding: var(--space-5) var(--space-6);
+  }
+
+  .why-sheet {
+    font-size: 1.0625rem;
+  }
+
+  .why-sheet p,
+  .why-list li {
+    line-height: 1.65;
+  }
+
+  /* Figure in the margin, sentence at a reading measure. */
+  .why-fact {
+    display: grid;
+    grid-template-columns: 216px minmax(0, 64ch);
+    column-gap: var(--space-6);
+    align-items: start;
+  }
+
+  .why-sheet > .why-fact + .why-fact {
+    margin-top: 0;
+    padding-top: var(--space-4);
+  }
+
+  .why-fact {
+    padding-bottom: var(--space-4);
+  }
+
+  .why-fact:last-child {
+    padding-bottom: 0;
+  }
+
+  .why-fact--plain .why-fact__text {
+    grid-column: 2;
+  }
+
+  .why-fact__margin {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    margin: 0 !important;
+    padding-top: 2px;
+  }
+
+  .why-fact__fig {
+    font-size: 1.375rem;
+    line-height: 1.15;
+  }
+
+  .why-fact__label {
+    letter-spacing: 0.05em;
+    line-height: 1.35;
+  }
+
+  .why-fact__src {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--size-label);
+    color: var(--graphite);
+  }
+
+  /* Lists and the math line up with the sentences, right of the figure margin. */
+  .why-sheet--list .why-list {
+    max-width: 64ch;
+    margin-left: calc(216px + var(--space-6));
+    padding-left: 1.1em;
+  }
+
+  .why-list li + li {
+    margin-top: var(--space-3);
+  }
+
+  .why-math {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-7);
+    align-items: start;
+  }
+
+  .why-sheet.why-math > * + * {
+    margin-top: 0;
+  }
+
+  .why-math__share {
+    font-family: var(--font-serif);
+    font-size: 1.375rem;
+    line-height: 1.4 !important;
+  }
+
+  .why-cta {
+    grid-template-columns: repeat(3, max-content);
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .why-cta .ui-button--block {
+    width: auto;
+    padding-inline: var(--space-6);
+  }
 }

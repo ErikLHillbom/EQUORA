@@ -1,13 +1,45 @@
 // Why it matters: a short field report on the stakes. Every figure lives in FIGURES with its
-// source (SPEC 12) and is shown with an inline citation. One drawing, no other illustration.
+// source (SPEC 12) and is shown with an inline citation. The key figure of a sentence is also set
+// in the margin with its source, so the page can be scanned; the sentence stays the claim.
+// One drawing, no other illustration.
+import type { ReactNode } from 'react'
 import { Link } from 'react-router'
-import { Cite } from '../about-data'
+import { Cite, sourceById } from '../about-data'
 import { LEARNING_DAYS } from '../baseline'
 import { useT } from '../i18n/LanguageContext'
 import { TOWN_CENTRE } from '../simulation'
 import { CoordinateBlock, HeaderStrip, Ledger, NumberedHeading, Paper, PostureDrawing, Slip, Tape, buttonClass } from '../shared/ui'
 import { FIGURES, tagShares } from './figures'
 import './why.css'
+
+interface FactProps {
+  /** The figure as the sentence states it, e.g. "USD 567". */
+  figure?: string
+  /** What the figure counts, three to five words. */
+  label?: string
+  /** Source id, shown under the figure. The sentence carries the link. */
+  source?: string
+  children: ReactNode
+}
+
+/**
+ * One sentence of the report, with its figure in the margin. The margin repeats the sentence, so
+ * it is hidden from screen readers.
+ */
+function Fact({ figure, label, source, children }: FactProps) {
+  return (
+    <div className={['why-fact', figure ? '' : 'why-fact--plain'].filter(Boolean).join(' ')}>
+      {figure && (
+        <p className="why-fact__margin" aria-hidden="true">
+          <span className="why-fact__fig">{figure}</span>
+          {label && <span className="why-fact__label">{label}</span>}
+          {source && <span className="why-fact__src">{sourceById(source).short}</span>}
+        </p>
+      )}
+      <p className="why-fact__text">{children}</p>
+    </div>
+  )
+}
 
 export default function WhyScreen() {
   const { t } = useT()
@@ -16,40 +48,42 @@ export default function WhyScreen() {
   const diedPct = ((f.colicDied / f.colicCases) * 100).toFixed(1)
 
   return (
-    <Paper className="why">
+    <Paper width="reading" className="why">
       <HeaderStrip title={t('why.title')} kicker={t('why.kicker')} id="why-header">
         <CoordinateBlock
           label={t('why.coords')}
           cells={[`${TOWN_CENTRE.lat} N`, `${TOWN_CENTRE.lon} E`, 'Yirgacheffe', 'Gedeo zone']}
         />
-        <p className="why-intro">{t('why.intro')}</p>
       </HeaderStrip>
 
-      <figure className="why-figure">
-        <Slip className="why-figure__slip">
-          <Tape placement="top" angle={-4} />
-          <PostureDrawing species="donkey" pose="walking" width={220} decorative />
-          <figcaption className="why-figure__caption">{t('why.drawing')}</figcaption>
-        </Slip>
-      </figure>
+      <div className="why-lede">
+        <p className="why-intro">{t('why.intro')}</p>
+        <figure className="why-figure">
+          <Slip className="why-figure__slip">
+            <Tape placement="top" angle={-4} />
+            <PostureDrawing species="donkey" pose="walking" width={460} decorative className="why-figure__drawing" />
+            <figcaption className="why-figure__caption">{t('why.drawing')}</figcaption>
+          </Slip>
+        </figure>
+      </div>
 
       <section aria-labelledby="why-value-h">
         <NumberedHeading n={1} id="why-value-h">
           {t('why.value.h')}
         </NumberedHeading>
         <Slip className="why-sheet">
-          <p>
+          <Fact figure={t('why.fig.aboutUsd', { n: f.donkeyValueUsd })} label={t('why.fig.worth')} source="asteraye2026">
             {t('why.value.worth', { usd: f.donkeyValueUsd, low: f.donkeyValuePi[0], high: f.donkeyValuePi[1] })} <Cite id="asteraye2026" />
-          </p>
-          <p>
+          </Fact>
+          <Fact figure={t('why.fig.upToPct', { n: f.incomeSharePct })} label={t('why.fig.income')} source="asteraye2026">
             {t('why.value.income', { pct: f.incomeSharePct, hours: f.labourHoursWeek })} <Cite id="asteraye2026" />
-          </p>
-          <p>
+          </Fact>
+          <Fact figure={t('why.fig.million', { n: f.donkeysMillion })} label={t('why.fig.donkeys')} source="asteraye2024">
             {t('why.value.herd', { donkeys: f.donkeysMillion, horses: f.horsesMillion })} <Cite id="asteraye2024" extra="CSA 2020" />
-          </p>
-          <p>
+          </Fact>
+          <Fact figure={t('why.fig.withinHours', { n: f.cherryHours })} label={t('why.fig.cherry')} source="fao">
             {t('why.value.coffee', { hours: f.cherryHours })} <Cite id="fao" />
-          </p>
+          </Fact>
         </Slip>
       </section>
 
@@ -58,11 +92,11 @@ export default function WhyScreen() {
           {t('why.loss.h')}
         </NumberedHeading>
         <Slip className="why-sheet">
-          <p>{t('why.loss.work')}</p>
-          <p>
+          <Fact>{t('why.loss.work')}</Fact>
+          <Fact>
             {t('why.loss.income')} <Cite id="geiger2020" />
-          </p>
-          <p>
+          </Fact>
+          <Fact figure={t('why.fig.aboutUsd', { n: Math.round(f.donkeyPriceUsd) })} label={t('why.fig.price')} source="asteraye2024">
             {t('why.loss.price', {
               donkey: Math.round(f.donkeyPriceUsd),
               low: f.donkeyPriceRange[0],
@@ -70,10 +104,10 @@ export default function WhyScreen() {
               horse: f.horsePriceUsd,
             })}{' '}
             <Cite id="asteraye2024" />
-          </p>
-          <p>
+          </Fact>
+          <Fact figure={String(f.womenInterviewed)} label={t('why.fig.women')} source="merridale2024women">
             {t('why.loss.women', { n: f.womenInterviewed })} <Cite id="merridale2024women" />
-          </p>
+          </Fact>
         </Slip>
       </section>
 
@@ -82,10 +116,10 @@ export default function WhyScreen() {
           {t('why.gap.h')}
         </NumberedHeading>
         <Slip className="why-sheet">
-          <p>
+          <Fact>
             {t('why.gap.late')} <Cite id="donkeysanctuary" />
-          </p>
-          <p>
+          </Fact>
+          <Fact figure={t('why.fig.ofN', { n: f.colicDied, of: f.colicCases })} label={t('why.fig.colic')} source="worku2017">
             {t('why.gap.clinic', {
               share: f.colicSharePct,
               cases: f.colicCases,
@@ -94,7 +128,7 @@ export default function WhyScreen() {
               donkeys: f.colicDonkeyPct,
             })}{' '}
             <Cite id="worku2017" />
-          </p>
+          </Fact>
         </Slip>
       </section>
 
@@ -102,7 +136,7 @@ export default function WhyScreen() {
         <NumberedHeading n={4} id="why-tag-h">
           {t('why.tag.h')}
         </NumberedHeading>
-        <Slip className="why-sheet">
+        <Slip className="why-sheet why-sheet--list">
           <ul className="why-list">
             <li>{t('why.tag.learn', { days: LEARNING_DAYS })}</li>
             <li>{t('why.tag.check', { phrase: t('tag.phrase.check') })}</li>
@@ -121,7 +155,7 @@ export default function WhyScreen() {
         <NumberedHeading n={5} id="why-math-h">
           {t('why.math.h')}
         </NumberedHeading>
-        <Slip className="why-sheet">
+        <Slip className="why-sheet why-math">
           <Ledger caption={t('why.math.caption')}>
             <thead>
               <tr>
@@ -150,11 +184,13 @@ export default function WhyScreen() {
               </tr>
             </tbody>
           </Ledger>
-          <p className="why-math__share" data-testid="why-share">
-            {t('why.math.share', { pct: shares.ofYearPct.toFixed(1), pricePct: Math.round(shares.ofPricePct) })}
-          </p>
-          <p className="why-note">{t('why.math.rough')}</p>
-          <p className="why-note">{t('why.math.limit')}</p>
+          <div className="why-math__result">
+            <p className="why-math__share" data-testid="why-share">
+              {t('why.math.share', { pct: shares.ofYearPct.toFixed(1), pricePct: Math.round(shares.ofPricePct) })}
+            </p>
+            <p className="why-note">{t('why.math.rough')}</p>
+            <p className="why-note">{t('why.math.limit')}</p>
+          </div>
         </Slip>
       </section>
 

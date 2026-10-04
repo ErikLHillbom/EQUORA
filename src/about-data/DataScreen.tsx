@@ -102,7 +102,7 @@ export default function DataScreen() {
           {t('data.privacy.h')}
         </NumberedHeading>
         <Slip>
-          <ul className="ds-list">
+          <ul className="ds-list ds-list--cols">
             {['local', 'forward', 'outputs', 'noDiagnosis', 'person', 'network'].map((k) => (
               <li key={k}>{t(`data.privacy.${k}`)}</li>
             ))}
@@ -152,204 +152,218 @@ function ModelSection({ m }: { m: DatasheetMetrics }) {
   const rollMin = ruleThreshold(roll.rule)
   const thresholdRule = (m as DatasheetMetrics & { thresholdRule?: string }).thresholdRule
 
+  // On a computer: the model's own numbers and the per-activity table on the left, the test
+  // against the simpler baseline and the confusion matrix on the right.
   return (
     <>
-      <Slip className="ds-sheet">
-        <p className="ds-lead">
-          {t('data.model.lead', {
-            kind,
-            trees: trees ?? '?',
-            seconds: m.windowSeconds,
-            n: m.labels.length,
-            classes,
-            hz: m.hz,
-            features: m.featureNames.length,
-          })}
-        </p>
-        <Ledger caption={t('data.spec.caption')} className="ds-spec">
-          <tbody>
-            <SpecRow k={t('data.spec.kind')} v={kind.charAt(0).toUpperCase() + kind.slice(1)} />
-            {trees !== undefined && (
-              <SpecRow k={t('data.spec.trees')} v={t('data.spec.treesValue', { n: trees, depth: m.model?.max_depth ?? '?' })} />
-            )}
-            <SpecRow k={t('data.spec.classes')} v={classes} />
-            <SpecRow k={t('data.spec.sensor')} v={t('data.spec.sensorValue', { hz: m.hz })} />
-            <SpecRow k={t('data.spec.window')} v={t('data.spec.windowValue', { n: m.windowSeconds })} />
-            <SpecRow k={t('data.spec.features')} v={String(m.featureNames.length)} />
-            <SpecRow
-              k={t('data.spec.size')}
-              v={m.modelNodes !== undefined ? t('data.spec.sizeValue', { kb: kb(m.modelBytes), nodes: int(m.modelNodes) }) : kb(m.modelBytes)}
-              testId="metric-size"
-            />
-            <SpecRow k={t('data.spec.test')} v={t('data.spec.testValue')} />
-            <SpecRow k={t('data.spec.horses')} v={String(m.perFold.length)} />
-            <SpecRow k={t('data.spec.windows')} v={int(m.windows)} />
-            <SpecRow k={t('data.spec.trained')} v={m.trainedAt.slice(0, 10)} />
-          </tbody>
-        </Ledger>
-      </Slip>
+      <div className="ds-cols">
+        <div className="ds-col">
+          <Slip className="ds-sheet">
+            <p className="ds-lead">
+              {t('data.model.lead', {
+                kind,
+                trees: trees ?? '?',
+                seconds: m.windowSeconds,
+                n: m.labels.length,
+                classes,
+                hz: m.hz,
+                features: m.featureNames.length,
+              })}
+            </p>
+            <Ledger caption={t('data.spec.caption')} className="ds-spec">
+              <tbody>
+                <SpecRow k={t('data.spec.kind')} v={kind.charAt(0).toUpperCase() + kind.slice(1)} />
+                {trees !== undefined && (
+                  <SpecRow k={t('data.spec.trees')} v={t('data.spec.treesValue', { n: trees, depth: m.model?.max_depth ?? '?' })} />
+                )}
+                <SpecRow k={t('data.spec.classes')} v={classes} />
+                <SpecRow k={t('data.spec.sensor')} v={t('data.spec.sensorValue', { hz: m.hz })} />
+                <SpecRow k={t('data.spec.window')} v={t('data.spec.windowValue', { n: m.windowSeconds })} />
+                <SpecRow k={t('data.spec.features')} v={String(m.featureNames.length)} />
+                <SpecRow
+                  k={t('data.spec.size')}
+                  v={m.modelNodes !== undefined ? t('data.spec.sizeValue', { kb: kb(m.modelBytes), nodes: int(m.modelNodes) }) : kb(m.modelBytes)}
+                  testId="metric-size"
+                />
+                <SpecRow k={t('data.spec.test')} v={t('data.spec.testValue')} />
+                <SpecRow k={t('data.spec.horses')} v={String(m.perFold.length)} />
+                <SpecRow k={t('data.spec.windows')} v={int(m.windows)} />
+                <SpecRow k={t('data.spec.trained')} v={m.trainedAt.slice(0, 10)} />
+              </tbody>
+            </Ledger>
+          </Slip>
 
-      <Slip className="ds-sheet">
-        <h3 className="ds-h3">{t('data.test.h')}</h3>
-        <p>{t('data.test.body', { horses: m.perFold.length, windows: int(m.windows) })}</p>
-        <Ledger caption={t('data.results.caption')} className="ds-results">
-          <thead>
-            <tr>
-              <th scope="col">{t('data.results.model')}</th>
-              <th scope="col" className="num">
-                {t('data.results.accuracy')}
-              </th>
-              <th scope="col" className="num">
-                {t('data.results.f1')}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="ds-results__shipped">
-              <th scope="row">{t('data.results.forest')}</th>
-              <td className="num" data-testid="metric-accuracy">
-                {pct(m.accuracy)}
-              </td>
-              <td className="num" data-testid="metric-f1">
-                {dec(m.macroF1)}
-              </td>
-            </tr>
-            <tr>
-              <th scope="row">{t('data.results.baseline')}</th>
-              <td className="num" data-testid="baseline-accuracy">
-                {pct(m.baseline.accuracy)}
-              </td>
-              <td className="num">{dec(m.baseline.macroF1)}</td>
-            </tr>
-          </tbody>
-        </Ledger>
-        <p>{t('data.baseline.note', { gap: accuracyGapPoints(m) })}</p>
-        <p>
-          {t('data.folds', {
-            low: pct(low.accuracy),
-            lowName: low.heldOut,
-            lowN: int(low.windows),
-            high: pct(high.accuracy),
-            highName: high.heldOut,
-            highN: int(high.windows),
-          })}
-        </p>
-      </Slip>
-
-      <Slip className="ds-sheet">
-        <Ledger caption={t('data.perclass.caption')} className="ds-perclass">
-          <thead>
-            <tr>
-              <th scope="col">{t('data.perclass.activity')}</th>
-              <th scope="col" className="num">
-                {t('data.perclass.precision')}
-              </th>
-              <th scope="col" className="num">
-                {t('data.perclass.recall')}
-              </th>
-              <th scope="col" className="num">
-                {t('data.perclass.f1')}
-              </th>
-              <th scope="col" className="num">
-                {t('data.perclass.windows')}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {m.labels.map((c) => {
-              const r = m.perClass[c]
-              return (
-                <tr key={c}>
-                  <th scope="row">{c}</th>
-                  <td className="num">{dec(r.precision, 2)}</td>
-                  <td className="num">{dec(r.recall, 2)}</td>
-                  <td className="num">{dec(r.f1, 2)}</td>
-                  <td className="num">{int(r.support)}</td>
+          <Slip className="ds-sheet">
+            <Ledger caption={t('data.perclass.caption')} className="ds-perclass">
+              <thead>
+                <tr>
+                  <th scope="col">{t('data.perclass.activity')}</th>
+                  <th scope="col" className="num">
+                    {t('data.perclass.precision')}
+                  </th>
+                  <th scope="col" className="num">
+                    {t('data.perclass.recall')}
+                  </th>
+                  <th scope="col" className="num">
+                    {t('data.perclass.f1')}
+                  </th>
+                  <th scope="col" className="num">
+                    {t('data.perclass.windows')}
+                  </th>
                 </tr>
-              )
-            })}
-          </tbody>
-        </Ledger>
-        <p className="ds-note">{t('data.perclass.note')}</p>
+              </thead>
+              <tbody>
+                {m.labels.map((c) => {
+                  const r = m.perClass[c]
+                  return (
+                    <tr key={c}>
+                      <th scope="row">{c}</th>
+                      <td className="num">{dec(r.precision, 2)}</td>
+                      <td className="num">{dec(r.recall, 2)}</td>
+                      <td className="num">{dec(r.f1, 2)}</td>
+                      <td className="num">{int(r.support)}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </Ledger>
+            <p className="ds-note">{t('data.perclass.note')}</p>
+          </Slip>
+        </div>
 
-        <hr className="ds-rule" />
-
-        <Ledger caption={t('data.confusion.caption')} className="ds-confusion">
-          <thead>
-            <tr>
-              <td />
-              <th scope="colgroup" colSpan={m.confusion.labels.length} className="ds-confusion__said">
-                {t('data.confusion.said')}
-              </th>
-            </tr>
-            <tr>
-              <th scope="col">{t('data.confusion.true')}</th>
-              {m.confusion.labels.map((c) => (
-                <th key={c} scope="col" className="num">
-                  {c}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {m.confusion.matrix.map((row, i) => (
-              <tr key={m.confusion.labels[i]}>
-                <th scope="row">{m.confusion.labels[i]}</th>
-                {row.map((n, j) => (
-                  <td key={j} className={i === j ? 'num ds-confusion__hit' : 'num'}>
-                    {int(n)}
+        <div className="ds-col">
+          <Slip className="ds-sheet">
+            <h3 className="ds-h3">{t('data.test.h')}</h3>
+            <p>{t('data.test.body', { horses: m.perFold.length, windows: int(m.windows) })}</p>
+            <Ledger caption={t('data.results.caption')} className="ds-results">
+              <thead>
+                <tr>
+                  <th scope="col">{t('data.results.model')}</th>
+                  <th scope="col" className="num">
+                    {t('data.results.accuracy')}
+                  </th>
+                  <th scope="col" className="num">
+                    {t('data.results.f1')}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="ds-results__shipped">
+                  <th scope="row">{t('data.results.forest')}</th>
+                  <td className="num" data-testid="metric-accuracy">
+                    {pct(m.accuracy)}
                   </td>
+                  <td className="num" data-testid="metric-f1">
+                    {dec(m.macroF1)}
+                  </td>
+                </tr>
+                <tr>
+                  <th scope="row">{t('data.results.baseline')}</th>
+                  <td className="num" data-testid="baseline-accuracy">
+                    {pct(m.baseline.accuracy)}
+                  </td>
+                  <td className="num">{dec(m.baseline.macroF1)}</td>
+                </tr>
+              </tbody>
+            </Ledger>
+            <p>{t('data.baseline.note', { gap: accuracyGapPoints(m) })}</p>
+            <p>
+              {t('data.folds', {
+                low: pct(low.accuracy),
+                lowName: low.heldOut,
+                lowN: int(low.windows),
+                high: pct(high.accuracy),
+                highName: high.heldOut,
+                highN: int(high.windows),
+              })}
+            </p>
+          </Slip>
+
+          <Slip className="ds-sheet">
+            <Ledger caption={t('data.confusion.caption')} className="ds-confusion">
+              <thead>
+                <tr>
+                  <td />
+                  <th scope="colgroup" colSpan={m.confusion.labels.length} className="ds-confusion__said">
+                    {t('data.confusion.said')}
+                  </th>
+                </tr>
+                <tr>
+                  <th scope="col">{t('data.confusion.true')}</th>
+                  {m.confusion.labels.map((c) => (
+                    <th key={c} scope="col" className="num">
+                      {c}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {m.confusion.matrix.map((row, i) => (
+                  <tr key={m.confusion.labels[i]}>
+                    <th scope="row">{m.confusion.labels[i]}</th>
+                    {row.map((n, j) => (
+                      <td key={j} className={i === j ? 'num ds-confusion__hit' : 'num'}>
+                        {int(n)}
+                      </td>
+                    ))}
+                  </tr>
                 ))}
-              </tr>
-            ))}
-          </tbody>
-        </Ledger>
-        <p className="ds-note">
-          {t('data.confusion.note', {
-            count: int(mix.count),
-            trueLabel: mix.trueLabel,
-            predicted: mix.predicted,
-            share: pct(mix.share),
-          })}
-        </p>
-      </Slip>
+              </tbody>
+            </Ledger>
+            <p className="ds-note">
+              {t('data.confusion.note', {
+                count: int(mix.count),
+                trueLabel: mix.trueLabel,
+                predicted: mix.predicted,
+                share: pct(mix.share),
+              })}
+            </p>
+          </Slip>
+        </div>
+      </div>
 
-      <Slip className="ds-sheet">
-        <h3 className="ds-h3">{t('data.threshold.h')}</h3>
-        <p>
-          {t('data.threshold.body', {
-            threshold: m.confidenceThreshold,
-            coverage: pct(m.coverageAtThreshold),
-            accuracy: pct(m.accuracyAtThreshold),
-          })}
-        </p>
-        <p className="ds-callout">
-          <StateStamp state="not_sure" showWord={false} id="data-threshold" />
-          <span>{t('data.threshold.notSure')}</span>
-        </p>
-        {thresholdRule && <Recorded rule={thresholdRule} />}
-
-        <hr className="ds-rule" />
-
-        <h3 className="ds-h3">{t('data.roll.h')}</h3>
-        {roll.kept ? (
-          <p>{t('data.roll.kept')}</p>
-        ) : (
+      <Slip className="ds-sheet ds-trio">
+        <div className="ds-trio__part">
+          <h3 className="ds-h3">{t('data.threshold.h')}</h3>
           <p>
-            {t('data.roll.failed', {
-              n: roll.withRoll ? int(roll.withRoll.support) : '?',
-              precision: roll.withRoll ? dec(roll.withRoll.precision, 2) : '?',
-              recall: roll.withRoll ? dec(roll.withRoll.recall, 2) : '?',
-              min: rollMin ?? '?',
+            {t('data.threshold.body', {
+              threshold: m.confidenceThreshold,
+              coverage: pct(m.coverageAtThreshold),
+              accuracy: pct(m.accuracyAtThreshold),
             })}
           </p>
-        )}
-        <Recorded rule={roll.rule} />
+          <p className="ds-callout">
+            <StateStamp state="not_sure" showWord={false} id="data-threshold" />
+            <span>{t('data.threshold.notSure')}</span>
+          </p>
+          {thresholdRule && <Recorded rule={thresholdRule} />}
+        </div>
 
         <hr className="ds-rule" />
 
-        <h3 className="ds-h3">{t('data.limits.h')}</h3>
-        <p>{t('data.limits.body')}</p>
+        <div className="ds-trio__part">
+          <h3 className="ds-h3">{t('data.roll.h')}</h3>
+          {roll.kept ? (
+            <p>{t('data.roll.kept')}</p>
+          ) : (
+            <p>
+              {t('data.roll.failed', {
+                n: roll.withRoll ? int(roll.withRoll.support) : '?',
+                precision: roll.withRoll ? dec(roll.withRoll.precision, 2) : '?',
+                recall: roll.withRoll ? dec(roll.withRoll.recall, 2) : '?',
+                min: rollMin ?? '?',
+              })}
+            </p>
+          )}
+          <Recorded rule={roll.rule} />
+        </div>
+
+        <hr className="ds-rule" />
+
+        <div className="ds-trio__part">
+          <h3 className="ds-h3">{t('data.limits.h')}</h3>
+          <p>{t('data.limits.body')}</p>
+        </div>
       </Slip>
     </>
   )
@@ -500,56 +514,60 @@ function RulesSection({ rollN }: { rollN: number | undefined }) {
     <Slip className="ds-sheet">
       <p className="ds-lead">{t('data.rules.lead')}</p>
 
-      <div className="ds-h3row">
-        <h3 className="ds-h3">{t('data.rules.exp.h')}</h3>
-        <RectStamp kind="experimental" id="data-exp" />
-      </div>
-      <p>{t('data.rules.exp.body', { roll: rollN ?? '?' })}</p>
-      <ul className="ds-list">
-        <li>{t('data.rules.lying')}</li>
-        <li>{t('data.rules.rolling')}</li>
-        <li>{t('data.rules.fall')}</li>
-      </ul>
+      <div className="ds-rules">
+        <div className="ds-rules__text">
+          <div className="ds-h3row">
+            <h3 className="ds-h3">{t('data.rules.exp.h')}</h3>
+            <RectStamp kind="experimental" id="data-exp" />
+          </div>
+          <p>{t('data.rules.exp.body', { roll: rollN ?? '?' })}</p>
+          <ul className="ds-list">
+            <li>{t('data.rules.lying')}</li>
+            <li>{t('data.rules.rolling')}</li>
+            <li>{t('data.rules.fall')}</li>
+          </ul>
 
-      <hr className="ds-rule" />
+          <hr className="ds-rule" />
 
-      <div className="ds-h3row">
-        <h3 className="ds-h3">{t('data.rules.water.h')}</h3>
-        <RectStamp kind="custom" text={t('data.rules.assumption')} tone="graphite" id="data-assume" />
-      </div>
-      <p>
-        {t('data.rules.water.body', { factor: DONKEY_SWEAT_FACTOR, forage: Math.round(FORAGE_SHARE * 100) })}
-      </p>
+          <div className="ds-h3row">
+            <h3 className="ds-h3">{t('data.rules.water.h')}</h3>
+            <RectStamp kind="custom" text={t('data.rules.assumption')} tone="graphite" id="data-assume" />
+          </div>
+          <p>
+            {t('data.rules.water.body', { factor: DONKEY_SWEAT_FACTOR, forage: Math.round(FORAGE_SHARE * 100) })}
+          </p>
 
-      <hr className="ds-rule" />
+          <hr className="ds-rule" />
 
-      <h3 className="ds-h3">{t('data.rules.baseline.h')}</h3>
-      <p>
-        {t('data.rules.baseline.body', {
-          days: BASELINE_DAYS,
-          zDonkey: PROFILES.donkey.departZ,
-          zHorse: PROFILES.horse.departZ,
-        })}
-      </p>
+          <h3 className="ds-h3">{t('data.rules.baseline.h')}</h3>
+          <p>
+            {t('data.rules.baseline.body', {
+              days: BASELINE_DAYS,
+              zDonkey: PROFILES.donkey.departZ,
+              zHorse: PROFILES.horse.departZ,
+            })}
+          </p>
+        </div>
 
-      <Ledger caption={t('data.rules.states.caption')} className="ds-states">
-        <thead>
-          <tr>
-            <th scope="col">{t('data.rules.states.state')}</th>
-            <th scope="col">{t('data.rules.states.when')}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {STATES.map((s) => (
-            <tr key={s}>
-              <th scope="row">
-                <StateStamp state={s} id={`data-${s}`} />
-              </th>
-              <td>{when[s]}</td>
+        <Ledger caption={t('data.rules.states.caption')} className="ds-states">
+          <thead>
+            <tr>
+              <th scope="col">{t('data.rules.states.state')}</th>
+              <th scope="col">{t('data.rules.states.when')}</th>
             </tr>
-          ))}
-        </tbody>
-      </Ledger>
+          </thead>
+          <tbody>
+            {STATES.map((s) => (
+              <tr key={s}>
+                <th scope="row">
+                  <StateStamp state={s} id={`data-${s}`} />
+                </th>
+                <td>{when[s]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Ledger>
+      </div>
     </Slip>
   )
 }
