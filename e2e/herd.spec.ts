@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 
-// Herd home and Statistics at 360 px: no sideways scroll, big touch targets, screenshots in
-// colour and greyscale so every state can be checked by shape and word.
+// Herd home and Statistics at 360 px and on a computer (1440 x 900): no sideways scroll, big touch
+// targets, screenshots in colour and greyscale so every state can be checked by shape and word.
 
 /** Interactive elements smaller than 48 x 48 px. */
 async function smallTargets(page: Page) {
@@ -46,10 +46,22 @@ test.describe('herd home', () => {
     await expect(page.getByText('Simulated data').first()).toBeVisible()
   })
 
-  test('has a card for every animal and one pencil circle', async ({ page }) => {
+  test('has a card for every animal and one Visit first tab', async ({ page }) => {
     await expect(page.locator('.herd-cards > li')).toHaveCount(12)
-    await expect(page.locator('.herd-cards .ui-pencilcircle')).toHaveCount(1)
-    await expect(page.locator('.herd-cards a[href^="/animal/"]')).toHaveCount(12)
+    await expect(page.locator('.herd-cards a.acard[href^="/animal/"]')).toHaveCount(12)
+    // Every card has the footer of the mockup: activity, doing, updated.
+    await expect(page.locator('.herd-cards .acard__foot dt')).toHaveCount(36)
+    const tab = page.locator('.herd-cards .acard__tab')
+    await expect(tab).toHaveCount(1)
+    await expect(tab).toHaveText('Visit first')
+    // The tab sits on the first card, and that card needs attention.
+    const first = page.locator('.herd-cards > li').first().locator('a.acard')
+    await expect(first.locator('.acard__tab')).toHaveCount(1)
+    await expect(first).not.toHaveAttribute('data-state', 'normal')
+    // A normal card has no coloured edge.
+    for (const card of await page.locator('a.acard[data-state="normal"]').all()) {
+      expect(await card.evaluate((el) => getComputedStyle(el).borderLeftWidth)).toBe('1px')
+    }
   })
 
   test('a count filters the list', async ({ page }) => {
@@ -93,6 +105,58 @@ test.describe('herd home', () => {
     await page.evaluate(() => window.scrollTo(0, 0))
     await page.addStyleTag({ content: 'html { filter: grayscale(1); }' })
     await page.screenshot({ path: 'e2e/screenshots/herd-360-grey.png', fullPage: true })
+  })
+})
+
+test.describe('on a computer', () => {
+  test.use({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 })
+
+  test('herd home: two-column visit first band, three card columns', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('heading', { name: 'Equid Sentinel', level: 1 })).toBeVisible({ timeout: 30_000 })
+    await settle(page)
+    expect(await overflow(page)).toBeLessThanOrEqual(0)
+    expect(await smallTargets(page)).toEqual([])
+    // The drawing and the text of the Visit first band sit side by side.
+    const fig = await page.locator('.herd-figure').boundingBox()
+    const text = await page.locator('.herd-first__text').boundingBox()
+    expect(fig && text && fig.x + fig.width <= text.x + 1 && Math.abs(fig.y - text.y) < 2).toBe(true)
+    // Three cards per row, 32 px apart.
+    const xs = await page.locator('.herd-cards > li').evaluateAll((els) => els.slice(0, 4).map((el) => Math.round(el.getBoundingClientRect().x)))
+    expect(new Set(xs.slice(0, 3)).size).toBe(3)
+    expect(xs[3]).toBe(xs[0])
+    expect(await page.locator('.herd-cards').evaluate((el) => getComputedStyle(el).columnGap)).toBe('32px')
+    // The drawing on a card is about 200 px wide.
+    const w = await page.locator('.acard__figure').first().evaluate((el) => el.getBoundingClientRect().width)
+    expect(w).toBeGreaterThan(150)
+    expect(w).toBeLessThanOrEqual(200)
+
+    await page.screenshot({ path: 'e2e/screenshots/herd-1440.png' })
+    await page.screenshot({ path: 'e2e/screenshots/herd-1440-full.png', fullPage: true })
+    await page.locator('#herd-animals').evaluate((el) => el.scrollIntoView())
+    await page.screenshot({ path: 'e2e/screenshots/herd-1440-cards.png' })
+    await page.evaluate(() => window.scrollTo(0, 0))
+    await page.addStyleTag({ content: 'html { filter: grayscale(1); }' })
+    await page.screenshot({ path: 'e2e/screenshots/herd-1440-grey.png', fullPage: true })
+  })
+
+  test('statistics: the whole ledger without scrolling, insights beside the top list', async ({ page }) => {
+    await page.goto('/stats')
+    await expect(page.getByRole('heading', { name: 'Statistics', level: 1 })).toBeVisible({ timeout: 30_000 })
+    await page.evaluate(() => document.fonts.ready)
+    expect(await overflow(page)).toBeLessThanOrEqual(0)
+    expect(await smallTargets(page)).toEqual([])
+    const scroll = await page.locator('.stats-scroll').evaluate((el) => el.scrollWidth - el.clientWidth)
+    expect(scroll).toBeLessThanOrEqual(0)
+    await expect(page.locator('.stats-scrollhint')).toBeHidden()
+    const a = await page.locator('#stats-insights-h').boundingBox()
+    const b = await page.locator('#stats-top-h').boundingBox()
+    expect(a && b && Math.abs(a.y - b.y) < 2 && b.x > a.x).toBe(true)
+
+    await page.screenshot({ path: 'e2e/screenshots/stats-1440.png' })
+    await page.screenshot({ path: 'e2e/screenshots/stats-1440-full.png', fullPage: true })
+    await page.addStyleTag({ content: 'html { filter: grayscale(1); }' })
+    await page.screenshot({ path: 'e2e/screenshots/stats-1440-grey.png', fullPage: true })
   })
 })
 

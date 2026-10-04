@@ -4,7 +4,7 @@ import type { StringTable } from '../i18n'
 // Amharic falls back to English for now.
 export const strings: StringTable = {
   en: {
-    'herd.kicker': 'Aricha cooperative',
+    'herd.kicker': 'Aricha cooperative, {count} animals',
     'herd.coords.label': 'Demo area',
     'herd.coords.town': 'Yirgacheffe',
     'herd.coords.zone': 'Gedeo zone',
@@ -15,6 +15,7 @@ export const strings: StringTable = {
     'herd.first.go': 'Go to {name}',
     'herd.first.open': 'Open {name}',
     'herd.first.drawing': '{name}, {pose}',
+    'herd.first.next': 'Next step',
 
     'herd.counts.heading': 'The herd now',
     'herd.counts.item': '{count} {state}',
@@ -22,13 +23,28 @@ export const strings: StringTable = {
     'herd.counts.showAll': 'Show all animals',
 
     'herd.list.heading': 'Animals',
-    'herd.list.note': '{count} animals, the one to visit first at the top.',
+    'herd.list.note': 'Most urgent first, then by name.',
     'herd.list.empty': 'No animal is in this state now.',
 
-    'herd.card.ids': '{species} · {tag}',
+    'herd.card.ids': '{species} · {household} · {tag}',
+    'herd.card.visitFirst': 'Visit first',
+    'herd.card.activity': 'Activity',
+    'herd.card.doing': 'Doing',
+    'herd.card.updated': 'Updated',
+    'herd.card.learning': 'Learning',
+    'herd.card.activityNone': 'Too little free time to measure',
+    'herd.card.ageNow': 'Now',
+    'herd.card.ageMin': '{minutes} min ago',
+    'herd.card.ageHours': '{hours} h ago',
     'herd.card.updatedNow': 'Updated now',
     'herd.card.updatedMin': 'Updated {minutes} min ago',
     'herd.card.updatedHours': 'Updated {hours} h ago',
+
+    'herd.household.domorso': 'Domorso',
+    'herd.household.konga': 'Konga',
+    'herd.household.haru': 'Haru road',
+    'herd.household.benko': 'Benko',
+    'herd.household.adido': 'Adido road',
 
     'herd.why': 'Why this matters',
 
